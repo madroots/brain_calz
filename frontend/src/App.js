@@ -8,7 +8,7 @@ function App() {
   const [challengeStats, setChallengeStats] = useState(null);
   const [freeRunStats, setFreeRunStats] = useState(null);
   const [weeklyChallenges, setWeeklyChallenges] = useState([]);
-  const [currentPage, setCurrentPage] = useState('loading'); // loading, auth, home, dashboard, problem, results, settings, challenge-carousel
+  const [currentPage, setCurrentPage] = useState('loading'); // loading, auth, home, dashboard, problem, results, settings, stats, play
   const [currentProblem, setCurrentProblem] = useState(null);
   const [challengeId, setChallengeId] = useState(null);
   const [freeRunSessionId, setFreeRunSessionId] = useState(null);
@@ -279,32 +279,29 @@ function App() {
       
       <button 
         className="play-button" 
-        onClick={() => setCurrentPage('challenge-carousel')}
+        onClick={() => setCurrentPage('play')}
       >
         PLAY
+      </button>
+      
+      <button 
+        className="stats-button" 
+        onClick={() => setCurrentPage('stats')}
+      >
+        Player Stats
       </button>
       
       <button 
         className="settings-button" 
         onClick={() => setCurrentPage('settings')}
       >
-        ⚙️ Settings
+        Settings
       </button>
-      
-      <div className="game-modes">
-        <h2>Other Game Modes</h2>
-        <button 
-          className="game-mode-button" 
-          onClick={() => setCurrentPage('free-run-config')}
-        >
-          Free Run
-        </button>
-      </div>
     </div>
   );
 
-  // Render challenge carousel
-  const renderChallengeCarousel = () => {
+  // Render play screen
+  const renderPlayScreen = () => {
     // Get the days to display (3 days: previous, current, next)
     const startIndex = Math.max(0, carouselIndex - 1);
     const endIndex = Math.min(weeklyChallenges.length, carouselIndex + 2);
@@ -317,7 +314,7 @@ function App() {
     
     return (
       <div className="home-screen">
-        <div className="settings-header">
+        <div className="screen-header">
           <button 
             className="back-button" 
             onClick={() => setCurrentPage('home')}
@@ -400,12 +397,15 @@ function App() {
           )}
         </div>
         
-        <button 
-          className="settings-button" 
-          onClick={() => setCurrentPage('home')}
-        >
-          Back to Home
-        </button>
+        <div className="game-modes">
+          <h2>Other Game Modes</h2>
+          <button 
+            className="game-mode-button" 
+            onClick={() => setCurrentPage('free-run-config')}
+          >
+            Free Run
+          </button>
+        </div>
       </div>
     );
   };
@@ -413,7 +413,7 @@ function App() {
   // Render settings screen
   const renderSettingsScreen = () => (
     <div className="settings-screen">
-      <div className="settings-header">
+      <div className="screen-header">
         <button 
           className="back-button" 
           onClick={() => setCurrentPage('home')}
@@ -424,11 +424,16 @@ function App() {
         <div style={{ width: 40 }}></div> {/* Spacer for alignment */}
       </div>
       
-      <div className="theme-toggle-settings">
-        <span>Theme</span>
-        <button className="theme-toggle-button" onClick={toggleTheme}>
-          {theme === 'light' ? '🌙' : '☀️'}
-        </button>
+      <div className="theme-toggle-switch">
+        <span>Dark Mode</span>
+        <label className="switch">
+          <input 
+            type="checkbox" 
+            checked={theme === 'dark'} 
+            onChange={toggleTheme} 
+          />
+          <span className="slider"></span>
+        </label>
       </div>
       
       <button 
@@ -437,6 +442,63 @@ function App() {
       >
         Logout
       </button>
+    </div>
+  );
+
+  // Render stats screen
+  const renderStatsScreen = () => (
+    <div className="stats-screen">
+      <div className="screen-header">
+        <button 
+          className="back-button" 
+          onClick={() => setCurrentPage('home')}
+        >
+          ←
+        </button>
+        <h1>Player Stats</h1>
+        <div style={{ width: 40 }}></div> {/* Spacer for alignment */}
+      </div>
+      
+      {user && userStats && (
+        <div className="user-info">
+          <h2>{user.username}'s Statistics</h2>
+          
+          <div className="stats-overview">
+            <div className="stat-card">
+              <h3>Current Streak</h3>
+              <p className="stat-value">{user.streak} days</p>
+            </div>
+            
+            <div className="stat-card">
+              <h3>Max Streak</h3>
+              <p className="stat-value">{user.max_streak} days</p>
+            </div>
+            
+            <div className="stat-card">
+              <h3>Total Problems Attempted</h3>
+              <p className="stat-value">{user.total_problems_attempted || 0}</p>
+            </div>
+          </div>
+          
+          <div className="accuracy-stats">
+            <h3>Accuracy Overview</h3>
+            <div className="accuracy-grid">
+              <div className="accuracy-item">
+                <span className="accuracy-label">Daily Challenges:</span>
+                <span className="accuracy-value">{userStats.user?.challenge_accuracy || 0}%</span>
+              </div>
+              <div className="accuracy-item">
+                <span className="accuracy-label">Free Run:</span>
+                <span className="accuracy-value">{userStats.user?.free_run_accuracy || 0}%</span>
+              </div>
+              <div className="accuracy-item">
+                <span className="accuracy-label">Overall:</span>
+                <span className="accuracy-value">{userStats.user?.overall_accuracy || 0}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -483,106 +545,18 @@ function App() {
     </div>
   );
 
-  // Render dashboard (old design)
-  const renderDashboard = () => (
-    <div className="dashboard">
-      <div className="dashboard-header">
-        <h1>Brain Calz</h1>
-        <div>
-          <button onClick={handleLogout} className="logout-button">
-            Logout ({user?.username})
-          </button>
-        </div>
-      </div>
-      
-      <p>Train your mental math skills daily!</p>
-      
-      {user && (
-        <div className="user-info">
-          <h2>Welcome, {user.username}!</h2>
-          
-          <div className="stats-overview">
-            <div className="stat-card">
-              <h3>Current Streak</h3>
-              <p className="stat-value">{user.streak} days</p>
-            </div>
-            
-            <div className="stat-card">
-              <h3>Max Streak</h3>
-              <p className="stat-value">{user.max_streak} days</p>
-            </div>
-            
-            <div className="stat-card">
-              <h3>Total Problems Attempted</h3>
-              <p className="stat-value">{user.total_problems_attempted}</p>
-            </div>
-          </div>
-          
-          <div className="accuracy-stats">
-            <h3>Accuracy Overview</h3>
-            <div className="accuracy-grid">
-              <div className="accuracy-item">
-                <span className="accuracy-label">Daily Challenges:</span>
-                <span className="accuracy-value">{userStats?.user?.challenge_accuracy || 0}%</span>
-              </div>
-              <div className="accuracy-item">
-                <span className="accuracy-label">Free Run:</span>
-                <span className="accuracy-value">{userStats?.user?.free_run_accuracy || 0}%</span>
-              </div>
-              <div className="accuracy-item">
-                <span className="accuracy-label">Overall:</span>
-                <span className="accuracy-value">{userStats?.user?.overall_accuracy || 0}%</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      
-      <div className="weekly-overview">
-        <h2>This Week's Challenges</h2>
-        <div className="week-grid">
-          {weeklyChallenges.map((challenge, index) => {
-            const date = new Date(challenge.date);
-            const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-            const isToday = date.toDateString() === new Date().toDateString();
-            
-            return (
-              <div 
-                key={index} 
-                className={`day-card ${challenge.completed ? 'completed' : ''} ${isToday ? 'today' : ''}`}
-              >
-                <div className="day-name">{dayNames[date.getDay()]}</div>
-                <div className="day-date">{date.getDate()}</div>
-                {challenge.completed && (
-                  <div className="score">{challenge.score}/{totalProblems || 5}</div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-      
-      <div className="actions">
-        <button onClick={() => startDailyChallenge()} className="primary-button">
-          Start Daily Challenge
-        </button>
-        <button 
-          onClick={() => setCurrentPage('free-run-config')} 
-          className="secondary-button"
-        >
-          Free Run / Extra Practice
-        </button>
-      </div>
-    </div>
-  );
-
   // Render problem page
   const renderProblemPage = () => (
     <div className="problem-page">
-      <div className="problem-header">
-        <div className="progress">
-          Problem {problemIndex} of {totalProblems}
-        </div>
+      <div className="screen-header">
+        <button 
+          className="back-button" 
+          onClick={() => setCurrentPage('play')}
+        >
+          ←
+        </button>
+        <h1>Problem {problemIndex} of {totalProblems}</h1>
+        <div style={{ width: 40 }}></div> {/* Spacer for alignment */}
       </div>
       
       {currentProblem && (
@@ -611,7 +585,16 @@ function App() {
   // Render results page
   const renderResultsPage = () => (
     <div className="results-page">
-      <h2>{freeRunSessionId ? 'Free Run Complete!' : 'Daily Challenge Complete!'}</h2>
+      <div className="screen-header">
+        <button 
+          className="back-button" 
+          onClick={() => setCurrentPage('play')}
+        >
+          ←
+        </button>
+        <h1>{freeRunSessionId ? 'Free Run Complete!' : 'Daily Challenge Complete!'}</h1>
+        <div style={{ width: 40 }}></div> {/* Spacer for alignment */}
+      </div>
       
       {results && (
         <div className="results-content">
@@ -639,7 +622,7 @@ function App() {
       <div className="actions">
         <button 
           onClick={() => {
-            setCurrentPage('home');
+            setCurrentPage('play');
             setResults(null);
             setFreeRunSessionId(null);
             setChallengeId(null);
@@ -670,7 +653,7 @@ function App() {
           }}
           className="primary-button"
         >
-          Back to Home
+          Continue Playing
         </button>
       </div>
     </div>
@@ -679,7 +662,16 @@ function App() {
   // Render free run configuration
   const renderFreeRunConfig = () => (
     <div className="free-run-config">
-      <h2>Free Run Configuration</h2>
+      <div className="screen-header">
+        <button 
+          className="back-button" 
+          onClick={() => setCurrentPage('play')}
+        >
+          ←
+        </button>
+        <h1>Free Run Configuration</h1>
+        <div style={{ width: 40 }}></div> {/* Spacer for alignment */}
+      </div>
       
       <div className="config-section">
         <h3>Modules</h3>
@@ -750,12 +742,6 @@ function App() {
         >
           Start Free Run
         </button>
-        <button 
-          onClick={() => setCurrentPage('home')} 
-          className="secondary-button"
-        >
-          Back
-        </button>
       </div>
     </div>
   );
@@ -780,9 +766,9 @@ function App() {
     <div className="App">
       {currentPage === 'auth' && renderAuthPage()}
       {currentPage === 'home' && renderHomeScreen()}
-      {currentPage === 'challenge-carousel' && renderChallengeCarousel()}
+      {currentPage === 'play' && renderPlayScreen()}
       {currentPage === 'settings' && renderSettingsScreen()}
-      {currentPage === 'dashboard' && renderDashboard()}
+      {currentPage === 'stats' && renderStatsScreen()}
       {currentPage === 'problem' && renderProblemPage()}
       {currentPage === 'results' && renderResultsPage()}
       {currentPage === 'free-run-config' && renderFreeRunConfig()}

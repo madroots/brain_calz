@@ -37,6 +37,8 @@
   --settings-btn-bg: #95a5a6;
   --settings-btn-hover: #7f8c8d;
   --carousel-highlight: #3498db;
+  --toggle-bg: #bdc3c7;
+  --toggle-checked-bg: #3498db;
 }
 
 /* Dark theme variables */
@@ -78,6 +80,8 @@
   --settings-btn-bg: #3c3c3c;
   --settings-btn-hover: #4a4a4a;
   --carousel-highlight: #3498db;
+  --toggle-bg: #3c3c3c;
+  --toggle-checked-bg: #3498db;
 }
 
 /* Global styles */
@@ -146,6 +150,25 @@
   transform: scale(0.98);
 }
 
+/* Stats button */
+.stats-button {
+  background-color: var(--settings-btn-bg);
+  color: var(--primary-btn-text);
+  border: none;
+  border-radius: 50px;
+  padding: 15px 30px;
+  font-size: 18px;
+  cursor: pointer;
+  margin: 10px 0;
+  width: 80%;
+  max-width: 300px;
+  transition: background-color 0.3s;
+}
+
+.stats-button:hover {
+  background-color: var(--settings-btn-hover);
+}
+
 /* Settings button */
 .settings-button {
   background-color: var(--settings-btn-bg);
@@ -168,7 +191,7 @@
 /* Game modes section */
 .game-modes {
   width: 100%;
-  margin-top: 40px;
+  margin-top: 20px;
 }
 
 .game-modes h2 {
@@ -200,14 +223,22 @@
 .challenge-carousel-container {
   width: 100%;
   margin: 30px 0;
-  overflow: hidden;
   position: relative;
+  overflow: hidden;
 }
 
 .challenge-carousel {
   display: flex;
   transition: transform 0.3s ease-out;
   padding: 20px 0;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+}
+
+.challenge-carousel::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome/Safari */
 }
 
 .challenge-day-card {
@@ -225,6 +256,7 @@
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   background-color: var(--day-card-bg);
   color: var(--day-card-text);
+  scroll-snap-align: center;
 }
 
 /* Future days */
@@ -328,16 +360,27 @@
   transition: background-color 0.3s, color 0.3s;
 }
 
-.settings-header {
+.stats-screen {
+  width: 100%;
+  padding: 20px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  min-height: 100vh;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.screen-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
 }
 
-.settings-header h1 {
+.screen-header h1 {
   color: var(--header-color);
   margin: 0;
+  flex-grow: 1;
+  text-align: center;
 }
 
 .back-button {
@@ -353,14 +396,16 @@
   align-items: center;
   justify-content: center;
   transition: background-color 0.3s;
+  position: absolute;
+  left: 20px;
 }
 
 .back-button:hover {
   background-color: var(--settings-btn-hover);
 }
 
-/* Theme toggle in settings */
-.theme-toggle-settings {
+/* Theme toggle switch */
+.theme-toggle-switch {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -370,28 +415,54 @@
   margin: 20px 0;
 }
 
-.theme-toggle-settings span {
+.theme-toggle-switch span {
   font-size: 18px;
   font-weight: bold;
 }
 
-.theme-toggle-button {
-  background: var(--primary-btn-bg);
-  color: var(--primary-btn-text);
-  border: none;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  cursor: pointer;
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.3s;
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
 }
 
-.theme-toggle-button:hover {
-  background: var(--primary-btn-hover);
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--toggle-bg);
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--toggle-checked-bg);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
 }
 
 /* Loading page, auth page */
