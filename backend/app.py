@@ -287,14 +287,36 @@ def get_user():
     if not user:
         return jsonify({'error': 'Not authenticated'}), 401
     
+    # Calculate accuracy based on all problems (challenges + free run)
+    accuracy = 0
+    total_attempted = user.total_problems_solved  # Free run problems
+    
+    # Add challenge problems (5 per completed challenge)
+    completed_challenges = DailyChallenge.query.filter_by(
+        user_id=user.id, 
+        completed=True
+    ).count()
+    total_attempted += completed_challenges * 5
+    
+    total_correct = user.total_correct_answers  # Free run correct answers
+    # Add challenge correct answers
+    completed_challenges_list = DailyChallenge.query.filter_by(
+        user_id=user.id, 
+        completed=True
+    ).all()
+    total_correct += sum(c.score or 0 for c in completed_challenges_list)
+    
+    if total_attempted > 0:
+        accuracy = round((total_correct / total_attempted) * 100, 2)
+    
     return jsonify({
         'id': user.id,
         'username': user.username,
         'streak': user.streak,
         'max_streak': user.max_streak,
-        'total_problems_solved': user.total_problems_solved,
-        'total_correct_answers': user.total_correct_answers,
-        'accuracy': user.total_problems_solved and round((user.total_correct_answers / user.total_problems_solved) * 100, 2) or 0
+        'total_problems_attempted': total_attempted,
+        'total_correct_answers': total_correct,
+        'accuracy': accuracy
     })
 
 
@@ -305,16 +327,46 @@ def get_user_stats():
     if not user:
         return jsonify({'error': 'Not authenticated'}), 401
     
-    # Calculate challenge accuracy separately
+    # Calculate challenge accuracy based on actual challenge scores
     challenge_accuracy = 0
     if user.total_challenges_completed > 0:
-        # This is a simplification - in a real app, you'd track challenge scores separately
-        challenge_accuracy = round((user.streak / user.total_challenges_completed) * 100, 2)
+        # Get all completed challenges for this user
+        completed_challenges = DailyChallenge.query.filter_by(
+            user_id=user.id, 
+            completed=True
+        ).all()
+        
+        if completed_challenges:
+            total_score = sum(c.score or 0 for c in completed_challenges)
+            max_possible_score = len(completed_challenges) * 5  # 5 problems per challenge
+            if max_possible_score > 0:
+                challenge_accuracy = round((total_score / max_possible_score) * 100, 2)
     
-    # Calculate free run accuracy
+    # Calculate free run accuracy (this is correct)
     free_run_accuracy = 0
     if user.total_problems_solved > 0:
         free_run_accuracy = round((user.total_correct_answers / user.total_problems_solved) * 100, 2)
+    
+    # Overall accuracy combines both challenge and free run
+    overall_accuracy = 0
+    total_attempted = user.total_problems_solved  # Free run problems
+    # Add challenge problems (5 per completed challenge)
+    completed_challenges = DailyChallenge.query.filter_by(
+        user_id=user.id, 
+        completed=True
+    ).count()
+    total_attempted += completed_challenges * 5
+    
+    total_correct = user.total_correct_answers  # Free run correct answers
+    # Add challenge correct answers
+    completed_challenges_list = DailyChallenge.query.filter_by(
+        user_id=user.id, 
+        completed=True
+    ).all()
+    total_correct += sum(c.score or 0 for c in completed_challenges_list)
+    
+    if total_attempted > 0:
+        overall_accuracy = round((total_correct / total_attempted) * 100, 2)
     
     return jsonify({
         'user': {
@@ -322,9 +374,10 @@ def get_user_stats():
             'username': user.username,
             'streak': user.streak,
             'max_streak': user.max_streak,
-            'total_problems_solved': user.total_problems_solved,
-            'total_correct_answers': user.total_correct_answers,
-            'overall_accuracy': free_run_accuracy,
+            'total_challenges_completed': user.total_challenges_completed,
+            'total_problems_attempted': total_attempted,
+            'total_correct_answers': total_correct,
+            'overall_accuracy': overall_accuracy,
             'challenge_accuracy': challenge_accuracy,
             'free_run_accuracy': free_run_accuracy
         }
@@ -339,7 +392,10 @@ def get_challenge_stats():
         return jsonify({'error': 'Not authenticated'}), 401
     
     # Get recent challenges
-    recent_challenges = DailyChallenge.query.filter_by(user_id=user.id)        .order_by(DailyChallenge.date.desc())        .limit(10)        .all()
+    recent_challenges = DailyChallenge.query.filter_by(user_id=user.id)\
+        .order_by(DailyChallenge.date.desc())\
+        .limit(10)\
+        .all()
     
     challenges_data = []
     for challenge in recent_challenges:
@@ -349,7 +405,7 @@ def get_challenge_stats():
             'score': challenge.score
         })
     
-    # Calculate challenge accuracy
+    # Calculate challenge accuracy based on actual scores
     challenge_accuracy = 0
     completed_challenges = [c for c in recent_challenges if c.completed]
     if completed_challenges:
@@ -358,12 +414,15 @@ def get_challenge_stats():
         if max_possible_score > 0:
             challenge_accuracy = round((total_score / max_possible_score) * 100, 2)
     
+    # Get total problems attempted from challenges
+    total_challenge_problems = len(completed_challenges) * 5
+    
     return jsonify({
         'recent_challenges': challenges_data,
         'streak': user.streak,
         'max_streak': user.max_streak,
         'challenge_accuracy': challenge_accuracy,
-        'total_problems_solved': user.total_problems_solved
+        'total_problems_solved': total_challenge_problems
     })
 
 
@@ -382,8 +441,7 @@ def get_free_run_stats():
     return jsonify({
         'total_problems_solved': user.total_problems_solved,
         'total_correct_answers': user.total_correct_answers,
-        'free_run_accuracy': free_run_accuracy,
-        'total_sessions': user.total_challenges_completed  # Using this as a proxy for now
+        'free_run_accuracy': free_run_accuracy
     })
 
 @app.route('/api/weekly-challenges', methods=['GET'])

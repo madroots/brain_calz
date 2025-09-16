@@ -310,8 +310,8 @@ function App() {
             </div>
             
             <div className="stat-card">
-              <h3>Total Problems Solved</h3>
-              <p className="stat-value">{user.total_problems_solved}</p>
+              <h3>Total Problems Attempted</h3>
+              <p className="stat-value">{user.total_problems_attempted}</p>
             </div>
           </div>
           
@@ -427,7 +427,7 @@ function App() {
               <h3>Challenge Stats</h3>
               <p>Current streak: {challengeStats.streak} days</p>
               <p>Max streak: {challengeStats.max_streak} days</p>
-              <p>Total problems solved: {challengeStats.total_problems_solved}</p>
+              <p>Total problems attempted: {challengeStats.total_problems_solved}</p>
             </div>
           )}
           
