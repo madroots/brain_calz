@@ -460,22 +460,14 @@ function App() {
             </div>
           )}
           
-          {!freeRunSessionId && challengeStats && (
-            <div className="challenge-stats">
-              <h3>Challenge Stats</h3>
-              <p>Current streak: {challengeStats.streak} days</p>
-              <p>Max streak: {challengeStats.max_streak} days</p>
-              <p>Total problems attempted: {challengeStats.total_problems_solved}</p>
-            </div>
-          )}
-          
-          {userStats && (
-            <div className="additional-stats">
-              <h3>Overall Progress</h3>
-              <p>Total challenges completed: {userStats.user.total_challenges_completed}</p>
-              <p>Overall accuracy: {userStats.user.overall_accuracy}%</p>
-            </div>
-          )}
+          <div className="session-stats">
+            <h3>Session Summary</h3>
+            <p>Problems attempted: {results.total}</p>
+            <p>Correct answers: {results.score}</p>
+            {results.accuracy !== undefined && (
+              <p>Session accuracy: {results.accuracy}%</p>
+            )}
+          </div>
         </div>
       )}
       

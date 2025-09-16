@@ -414,7 +414,7 @@
   margin-bottom: 20px;
 }
 
-.challenge-stats, .additional-stats {
+.session-stats {
   background-color: var(--accuracy-bg);
   padding: 20px;
   border-radius: 8px;
@@ -422,7 +422,7 @@
   transition: background-color 0.3s;
 }
 
-.challenge-stats h3, .additional-stats h3 {
+.session-stats h3 {
   color: var(--header-color);
   margin-top: 0;
 }
