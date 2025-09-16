@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import api from './api';
 
@@ -8,7 +8,7 @@ function App() {
   const [challengeStats, setChallengeStats] = useState(null);
   const [freeRunStats, setFreeRunStats] = useState(null);
   const [weeklyChallenges, setWeeklyChallenges] = useState([]);
-  const [currentPage, setCurrentPage] = useState('loading'); // loading, auth, dashboard, problem, results
+  const [currentPage, setCurrentPage] = useState('loading'); // loading, auth, home, dashboard, problem, results, settings, challenge-carousel
   const [currentProblem, setCurrentProblem] = useState(null);
   const [challengeId, setChallengeId] = useState(null);
   const [freeRunSessionId, setFreeRunSessionId] = useState(null);
@@ -24,6 +24,8 @@ function App() {
   const [username, setUsername] = useState('');
   const [loginError, setLoginError] = useState('');
   const [theme, setTheme] = useState('light'); // 'light' or 'dark'
+  const [carouselIndex, setCarouselIndex] = useState(0);
+  const carouselRef = useRef(null);
 
   // Check for saved theme preference
   useEffect(() => {
@@ -51,7 +53,7 @@ function App() {
       const response = await api.get('/auth/status');
       if (response.data.authenticated) {
         setUser(response.data.user);
-        setCurrentPage('dashboard');
+        setCurrentPage('home');
         fetchData();
       } else {
         setCurrentPage('auth');
@@ -76,7 +78,7 @@ function App() {
       console.log('Login response:', response.data);
       if (response.data.success) {
         setUser(response.data.user);
-        setCurrentPage('dashboard');
+        setCurrentPage('home');
         fetchData();
       } else {
         setLoginError('Login failed: ' + (response.data.error || 'Unknown error'));
@@ -135,9 +137,9 @@ function App() {
   };
 
   // Start daily challenge
-  const startDailyChallenge = async () => {
+  const startDailyChallenge = async (date) => {
     try {
-      console.log('Starting daily challenge...');
+      console.log('Starting daily challenge for date:', date);
       const response = await api.post('/start-daily-challenge');
       console.log('Daily challenge started:', response.data);
       setChallengeId(response.data.challenge_id);
@@ -179,7 +181,8 @@ function App() {
         // Challenge completed
         setResults({
           score: response.data.score,
-          total: response.data.total_problems
+          total: response.data.total_problems,
+          accuracy: response.data.score / response.data.total_problems * 100
         });
         setCurrentPage('results');
         
@@ -255,14 +258,192 @@ function App() {
     }
   };
 
+  // Carousel navigation
+  const goToPrevDay = () => {
+    if (carouselIndex > 0) {
+      setCarouselIndex(carouselIndex - 1);
+    }
+  };
+
+  const goToNextDay = () => {
+    if (carouselIndex < weeklyChallenges.length - 1) {
+      setCarouselIndex(carouselIndex + 1);
+    }
+  };
+
+  // Render home screen
+  const renderHomeScreen = () => (
+    <div className="home-screen">
+      <div className="app-logo">🧠 Brain Calz</div>
+      <div className="user-greeting">Hello, {user?.username}!</div>
+      
+      <button 
+        className="play-button" 
+        onClick={() => setCurrentPage('challenge-carousel')}
+      >
+        PLAY
+      </button>
+      
+      <button 
+        className="settings-button" 
+        onClick={() => setCurrentPage('settings')}
+      >
+        ⚙️ Settings
+      </button>
+      
+      <div className="game-modes">
+        <h2>Other Game Modes</h2>
+        <button 
+          className="game-mode-button" 
+          onClick={() => setCurrentPage('free-run-config')}
+        >
+          Free Run
+        </button>
+      </div>
+    </div>
+  );
+
+  // Render challenge carousel
+  const renderChallengeCarousel = () => {
+    // Get the days to display (3 days: previous, current, next)
+    const startIndex = Math.max(0, carouselIndex - 1);
+    const endIndex = Math.min(weeklyChallenges.length, carouselIndex + 2);
+    const visibleDays = weeklyChallenges.slice(startIndex, endIndex);
+    
+    // Pad with empty days if needed
+    while (visibleDays.length < 3) {
+      visibleDays.push(null);
+    }
+    
+    return (
+      <div className="home-screen">
+        <div className="settings-header">
+          <button 
+            className="back-button" 
+            onClick={() => setCurrentPage('home')}
+          >
+            ←
+          </button>
+          <h1>Daily Challenges</h1>
+          <div style={{ width: 40 }}></div> {/* Spacer for alignment */}
+        </div>
+        
+        <div className="challenge-carousel-container">
+          {carouselIndex > 0 && (
+            <button className="carousel-nav prev" onClick={goToPrevDay}>
+              ‹
+            </button>
+          )}
+          
+          <div className="challenge-carousel">
+            {visibleDays.map((challenge, index) => {
+              if (!challenge) {
+                return (
+                  <div key={index} className="challenge-day-card future">
+                    <div className="day-name">-</div>
+                    <div className="day-date">-</div>
+                  </div>
+                );
+              }
+              
+              const date = new Date(challenge.date);
+              const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+              const isToday = date.toDateString() === new Date().toDateString();
+              const isFuture = date > new Date();
+              const isPast = date < new Date();
+              
+              // Determine card class
+              let cardClass = "challenge-day-card";
+              if (isToday) {
+                cardClass += " today";
+              } else if (isFuture) {
+                cardClass += " future";
+              } else if (isPast && challenge.completed) {
+                cardClass += " completed";
+              } else if (isPast && !challenge.completed) {
+                cardClass += " past";
+              }
+              
+              return (
+                <div 
+                  key={index} 
+                  className={cardClass}
+                  onClick={() => {
+                    if (!isFuture) {
+                      if (challenge.completed) {
+                        // Maybe show a summary or allow review?
+                        alert(`Challenge completed with score: ${challenge.score}/5`);
+                      } else {
+                        // Start the challenge
+                        startDailyChallenge(challenge.date);
+                      }
+                    }
+                  }}
+                >
+                  <div className="day-name">{dayNames[date.getDay()]}</div>
+                  <div className="day-date">{date.getDate()}</div>
+                  {challenge.completed && (
+                    <div className="score">{challenge.score}/5</div>
+                  )}
+                  {isFuture && (
+                    <div className="score">🔒</div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          
+          {carouselIndex < weeklyChallenges.length - 1 && (
+            <button className="carousel-nav next" onClick={goToNextDay}>
+              ›
+            </button>
+          )}
+        </div>
+        
+        <button 
+          className="settings-button" 
+          onClick={() => setCurrentPage('home')}
+        >
+          Back to Home
+        </button>
+      </div>
+    );
+  };
+
+  // Render settings screen
+  const renderSettingsScreen = () => (
+    <div className="settings-screen">
+      <div className="settings-header">
+        <button 
+          className="back-button" 
+          onClick={() => setCurrentPage('home')}
+        >
+          ←
+        </button>
+        <h1>Settings</h1>
+        <div style={{ width: 40 }}></div> {/* Spacer for alignment */}
+      </div>
+      
+      <div className="theme-toggle-settings">
+        <span>Theme</span>
+        <button className="theme-toggle-button" onClick={toggleTheme}>
+          {theme === 'light' ? '🌙' : '☀️'}
+        </button>
+      </div>
+      
+      <button 
+        className="settings-button" 
+        onClick={handleLogout}
+      >
+        Logout
+      </button>
+    </div>
+  );
+
   // Render authentication page
   const renderAuthPage = () => (
     <div className="auth-page">
-      <button className="theme-toggle" onClick={toggleTheme}>
-        {theme === 'light' ? '🌙' : '☀️'}
-      </button>
-      
-      <h1>Brain Calz</h1>
+      <h1>🧠 Brain Calz</h1>
       <p>Train your mental math skills daily!</p>
       
       <div className="auth-form">
@@ -297,16 +478,12 @@ function App() {
   // Render loading page
   const renderLoadingPage = () => (
     <div className="loading-page">
-      <button className="theme-toggle" onClick={toggleTheme}>
-        {theme === 'light' ? '🌙' : '☀️'}
-      </button>
-      
-      <h1>Brain Calz</h1>
+      <h1>🧠 Brain Calz</h1>
       <p>Loading...</p>
     </div>
   );
 
-  // Render dashboard
+  // Render dashboard (old design)
   const renderDashboard = () => (
     <div className="dashboard">
       <div className="dashboard-header">
@@ -317,10 +494,6 @@ function App() {
           </button>
         </div>
       </div>
-      
-      <button className="theme-toggle" onClick={toggleTheme}>
-        {theme === 'light' ? '🌙' : '☀️'}
-      </button>
       
       <p>Train your mental math skills daily!</p>
       
@@ -390,7 +563,7 @@ function App() {
       </div>
       
       <div className="actions">
-        <button onClick={startDailyChallenge} className="primary-button">
+        <button onClick={() => startDailyChallenge()} className="primary-button">
           Start Daily Challenge
         </button>
         <button 
@@ -406,10 +579,6 @@ function App() {
   // Render problem page
   const renderProblemPage = () => (
     <div className="problem-page">
-      <button className="theme-toggle" onClick={toggleTheme}>
-        {theme === 'light' ? '🌙' : '☀️'}
-      </button>
-      
       <div className="problem-header">
         <div className="progress">
           Problem {problemIndex} of {totalProblems}
@@ -442,10 +611,6 @@ function App() {
   // Render results page
   const renderResultsPage = () => (
     <div className="results-page">
-      <button className="theme-toggle" onClick={toggleTheme}>
-        {theme === 'light' ? '🌙' : '☀️'}
-      </button>
-      
       <h2>{freeRunSessionId ? 'Free Run Complete!' : 'Daily Challenge Complete!'}</h2>
       
       {results && (
@@ -456,7 +621,7 @@ function App() {
           
           {results.accuracy !== undefined && (
             <div className="accuracy-display">
-              Accuracy: {results.accuracy}%
+              Accuracy: {Math.round(results.accuracy)}%
             </div>
           )}
           
@@ -465,7 +630,7 @@ function App() {
             <p>Problems attempted: {results.total}</p>
             <p>Correct answers: {results.score}</p>
             {results.accuracy !== undefined && (
-              <p>Session accuracy: {results.accuracy}%</p>
+              <p>Session accuracy: {Math.round(results.accuracy)}%</p>
             )}
           </div>
         </div>
@@ -474,7 +639,7 @@ function App() {
       <div className="actions">
         <button 
           onClick={() => {
-            setCurrentPage('dashboard');
+            setCurrentPage('home');
             setResults(null);
             setFreeRunSessionId(null);
             setChallengeId(null);
@@ -505,7 +670,7 @@ function App() {
           }}
           className="primary-button"
         >
-          Back to Dashboard
+          Back to Home
         </button>
       </div>
     </div>
@@ -514,10 +679,6 @@ function App() {
   // Render free run configuration
   const renderFreeRunConfig = () => (
     <div className="free-run-config">
-      <button className="theme-toggle" onClick={toggleTheme}>
-        {theme === 'light' ? '🌙' : '☀️'}
-      </button>
-      
       <h2>Free Run Configuration</h2>
       
       <div className="config-section">
@@ -590,7 +751,7 @@ function App() {
           Start Free Run
         </button>
         <button 
-          onClick={() => setCurrentPage('dashboard')} 
+          onClick={() => setCurrentPage('home')} 
           className="secondary-button"
         >
           Back
@@ -618,6 +779,9 @@ function App() {
   return (
     <div className="App">
       {currentPage === 'auth' && renderAuthPage()}
+      {currentPage === 'home' && renderHomeScreen()}
+      {currentPage === 'challenge-carousel' && renderChallengeCarousel()}
+      {currentPage === 'settings' && renderSettingsScreen()}
       {currentPage === 'dashboard' && renderDashboard()}
       {currentPage === 'problem' && renderProblemPage()}
       {currentPage === 'results' && renderResultsPage()}
