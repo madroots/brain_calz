@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import api from './api';
+import useTranslation from './hooks/useTranslation';
 
 function App() {
+  const { t, language, changeLanguage } = useTranslation();
+  
   const [user, setUser] = useState(null);
   const [userStats, setUserStats] = useState(null);
   const [challengeStats, setChallengeStats] = useState(null);
@@ -67,7 +70,7 @@ function App() {
   // Handle login
   const handleLogin = async () => {
     if (!username.trim()) {
-      setLoginError('Please enter a username');
+      setLoginError(t('auth.error.emptyUsername'));
       return;
     }
     
@@ -81,11 +84,11 @@ function App() {
         setCurrentPage('home');
         fetchData();
       } else {
-        setLoginError('Login failed: ' + (response.data.error || 'Unknown error'));
+        setLoginError(`${t('auth.error.loginFailed')}: ${response.data.error || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Login error:', error);
-      setLoginError('Login failed: ' + (error.response?.data?.error || error.message || 'Unknown error'));
+      setLoginError(`${t('auth.error.loginFailed')}: ${error.response?.data?.error || error.message || 'Unknown error'}`);
     }
   };
 
@@ -274,28 +277,28 @@ function App() {
   // Render home screen
   const renderHomeScreen = () => (
     <div className="home-screen">
-      <div className="app-logo">🧠 Brain Calz</div>
-      <div className="user-greeting">Hello, {user?.username}!</div>
+      <div className="app-logo">🧠 {t('app.title')}</div>
+      <div className="user-greeting">{t('home.greeting', { username: user?.username })}</div>
       
       <button 
         className="play-button" 
         onClick={() => setCurrentPage('play')}
       >
-        PLAY
+        {t('home.playButton')}
       </button>
       
       <button 
         className="stats-button" 
         onClick={() => setCurrentPage('stats')}
       >
-        Player Stats
+        {t('home.statsButton')}
       </button>
       
       <button 
         className="settings-button" 
         onClick={() => setCurrentPage('settings')}
       >
-        Settings
+        {t('home.settingsButton')}
       </button>
     </div>
   );
@@ -321,7 +324,7 @@ function App() {
           >
             ←
           </button>
-          <h1>Daily Challenges</h1>
+          <h1>{t('play.title')}</h1>
           <div style={{ width: 40 }}></div> {/* Spacer for alignment */}
         </div>
         
@@ -344,7 +347,7 @@ function App() {
               }
               
               const date = new Date(challenge.date);
-              const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+              const dayNames = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
               const isToday = date.toDateString() === new Date().toDateString();
               const isFuture = date > new Date();
               const isPast = date < new Date();
@@ -369,7 +372,7 @@ function App() {
                     if (!isFuture) {
                       if (challenge.completed) {
                         // Maybe show a summary or allow review?
-                        alert(`Challenge completed with score: ${challenge.score}/5`);
+                        alert(`${t('results.dailyComplete')} ${t('challengeCarousel.completed', { score: challenge.score })}`);
                       } else {
                         // Start the challenge
                         startDailyChallenge(challenge.date);
@@ -377,13 +380,13 @@ function App() {
                     }
                   }}
                 >
-                  <div className="day-name">{dayNames[date.getDay()]}</div>
+                  <div className="day-name">{t(`days.${dayNames[date.getDay()]}`)}</div>
                   <div className="day-date">{date.getDate()}</div>
                   {challenge.completed && (
                     <div className="score">{challenge.score}/5</div>
                   )}
                   {isFuture && (
-                    <div className="score">🔒</div>
+                    <div className="score">{t('challengeCarousel.locked')}</div>
                   )}
                 </div>
               );
@@ -398,12 +401,12 @@ function App() {
         </div>
         
         <div className="game-modes">
-          <h2>Other Game Modes</h2>
+          <h2>{t('play.otherGameModes')}</h2>
           <button 
             className="game-mode-button" 
             onClick={() => setCurrentPage('free-run-config')}
           >
-            Free Run
+            {t('play.freeRunButton')}
           </button>
         </div>
       </div>
@@ -420,12 +423,12 @@ function App() {
         >
           ←
         </button>
-        <h1>Settings</h1>
+        <h1>{t('settings.title')}</h1>
         <div style={{ width: 40 }}></div> {/* Spacer for alignment */}
       </div>
       
       <div className="theme-toggle-switch">
-        <span>Dark Mode</span>
+        <span>{t('settings.darkMode')}</span>
         <label className="switch">
           <input 
             type="checkbox" 
@@ -436,11 +439,24 @@ function App() {
         </label>
       </div>
       
+      <div className="language-selector">
+        <span>Language / Idioma / Langue</span>
+        <select 
+          value={language} 
+          onChange={(e) => changeLanguage(e.target.value)}
+          className="language-select"
+        >
+          <option value="en">English</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+        </select>
+      </div>
+      
       <button 
         className="settings-button" 
         onClick={handleLogout}
       >
-        Logout
+        {t('settings.logoutButton')}
       </button>
     </div>
   );
@@ -455,44 +471,44 @@ function App() {
         >
           ←
         </button>
-        <h1>Player Stats</h1>
+        <h1>{t('stats.title')}</h1>
         <div style={{ width: 40 }}></div> {/* Spacer for alignment */}
       </div>
       
       {user && userStats && (
         <div className="user-info">
-          <h2>{user.username}'s Statistics</h2>
+          <h2>{t('stats.greeting', { username: user.username })}</h2>
           
           <div className="stats-overview">
             <div className="stat-card">
-              <h3>Current Streak</h3>
+              <h3>{t('stats.currentStreak')}</h3>
               <p className="stat-value">{user.streak} days</p>
             </div>
             
             <div className="stat-card">
-              <h3>Max Streak</h3>
+              <h3>{t('stats.maxStreak')}</h3>
               <p className="stat-value">{user.max_streak} days</p>
             </div>
             
             <div className="stat-card">
-              <h3>Total Problems Attempted</h3>
+              <h3>{t('stats.totalProblems')}</h3>
               <p className="stat-value">{user.total_problems_attempted || 0}</p>
             </div>
           </div>
           
           <div className="accuracy-stats">
-            <h3>Accuracy Overview</h3>
+            <h3>{t('stats.accuracy.title')}</h3>
             <div className="accuracy-grid">
               <div className="accuracy-item">
-                <span className="accuracy-label">Daily Challenges:</span>
+                <span className="accuracy-label">{t('stats.accuracy.dailyChallenges')}</span>
                 <span className="accuracy-value">{userStats.user?.challenge_accuracy || 0}%</span>
               </div>
               <div className="accuracy-item">
-                <span className="accuracy-label">Free Run:</span>
+                <span className="accuracy-label">{t('stats.accuracy.freeRun')}</span>
                 <span className="accuracy-value">{userStats.user?.free_run_accuracy || 0}%</span>
               </div>
               <div className="accuracy-item">
-                <span className="accuracy-label">Overall:</span>
+                <span className="accuracy-label">{t('stats.accuracy.overall')}</span>
                 <span className="accuracy-value">{userStats.user?.overall_accuracy || 0}%</span>
               </div>
             </div>
@@ -505,12 +521,12 @@ function App() {
   // Render authentication page
   const renderAuthPage = () => (
     <div className="auth-page">
-      <h1>🧠 Brain Calz</h1>
-      <p>Train your mental math skills daily!</p>
+      <h1>🧠 {t('app.title')}</h1>
+      <p>{t('app.welcome')}</p>
       
       <div className="auth-form">
-        <h2>Welcome</h2>
-        <p>Please enter your username to continue:</p>
+        <h2>{t('auth.title')}</h2>
+        <p>{t('auth.prompt')}</p>
         
         {loginError && (
           <div className="error-message">
@@ -525,13 +541,13 @@ function App() {
             setUsername(e.target.value);
             if (loginError) setLoginError('');
           }}
-          placeholder="Enter your username"
+          placeholder={t('auth.usernamePlaceholder')}
           className="username-input"
           onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
         />
         
         <button onClick={handleLogin} className="primary-button">
-          Continue
+          {t('auth.continueButton')}
         </button>
       </div>
     </div>
@@ -540,8 +556,8 @@ function App() {
   // Render loading page
   const renderLoadingPage = () => (
     <div className="loading-page">
-      <h1>🧠 Brain Calz</h1>
-      <p>Loading...</p>
+      <h1>🧠 {t('app.title')}</h1>
+      <p>{t('app.loading')}</p>
     </div>
   );
 
@@ -555,7 +571,7 @@ function App() {
         >
           ←
         </button>
-        <h1>Problem {problemIndex} of {totalProblems}</h1>
+        <h1>{t('problem.title', { current: problemIndex, total: totalProblems })}</h1>
         <div style={{ width: 40 }}></div> {/* Spacer for alignment */}
       </div>
       
@@ -572,10 +588,11 @@ function App() {
             onKeyPress={handleKeyPress}
             autoFocus
             className="answer-input"
+            placeholder={t('problem.placeholder')}
           />
           
           <button onClick={submitAnswer} className="primary-button">
-            Submit Answer
+            {t('problem.submitButton')}
           </button>
         </div>
       )}
@@ -592,28 +609,28 @@ function App() {
         >
           ←
         </button>
-        <h1>{freeRunSessionId ? 'Free Run Complete!' : 'Daily Challenge Complete!'}</h1>
+        <h1>{freeRunSessionId ? t('results.freeRunComplete') : t('results.dailyComplete')}</h1>
         <div style={{ width: 40 }}></div> {/* Spacer for alignment */}
       </div>
       
       {results && (
         <div className="results-content">
           <div className="score-display">
-            Your score: {results.score} out of {results.total}
+            {t('results.score', { score: results.score, total: results.total })}
           </div>
           
           {results.accuracy !== undefined && (
             <div className="accuracy-display">
-              Accuracy: {Math.round(results.accuracy)}%
+              {t('results.accuracy', { accuracy: Math.round(results.accuracy) })}
             </div>
           )}
           
           <div className="session-stats">
-            <h3>Session Summary</h3>
-            <p>Problems attempted: {results.total}</p>
-            <p>Correct answers: {results.score}</p>
+            <h3>{t('results.sessionSummary')}</h3>
+            <p>{t('results.problemsAttempted', { count: results.total })}</p>
+            <p>{t('results.correctAnswers', { count: results.score })}</p>
             {results.accuracy !== undefined && (
-              <p>Session accuracy: {Math.round(results.accuracy)}%</p>
+              <p>{t('results.sessionAccuracy', { accuracy: Math.round(results.accuracy) })}%</p>
             )}
           </div>
         </div>
@@ -653,7 +670,7 @@ function App() {
           }}
           className="primary-button"
         >
-          Continue Playing
+          {t('results.continueButton')}
         </button>
       </div>
     </div>
@@ -669,12 +686,12 @@ function App() {
         >
           ←
         </button>
-        <h1>Free Run Configuration</h1>
+        <h1>{t('freeRun.title')}</h1>
         <div style={{ width: 40 }}></div> {/* Spacer for alignment */}
       </div>
       
       <div className="config-section">
-        <h3>Modules</h3>
+        <h3>{t('freeRun.modules')}</h3>
         <div className="checkbox-group">
           {['addition', 'subtraction', 'multiplication', 'division'].map(module => (
             <label key={module} className="checkbox-label">
@@ -695,14 +712,14 @@ function App() {
                   }
                 }}
               />
-              {module.charAt(0).toUpperCase() + module.slice(1)}
+              {t(`modules.${module}`)}
             </label>
           ))}
         </div>
       </div>
       
       <div className="config-section">
-        <h3>Difficulty Level</h3>
+        <h3>{t('freeRun.difficulty')}</h3>
         <select
           value={freeRunConfig.difficultyLevel}
           onChange={(e) => setFreeRunConfig({
@@ -711,14 +728,14 @@ function App() {
           })}
           className="select-input"
         >
-          <option value={1}>Easy</option>
-          <option value={2}>Medium</option>
-          <option value={3}>Hard</option>
+          <option value={1}>{t('freeRun.easy')}</option>
+          <option value={2}>{t('freeRun.medium')}</option>
+          <option value={3}>{t('freeRun.hard')}</option>
         </select>
       </div>
       
       <div className="config-section">
-        <h3>Number of Problems</h3>
+        <h3>{t('freeRun.problemCount')}</h3>
         <select
           value={freeRunConfig.problemCount}
           onChange={(e) => setFreeRunConfig({
@@ -740,7 +757,7 @@ function App() {
           className="primary-button"
           disabled={freeRunConfig.modules.length === 0}
         >
-          Start Free Run
+          {t('freeRun.startButton')}
         </button>
       </div>
     </div>
@@ -749,11 +766,11 @@ function App() {
   // Helper function to get operator symbol
   const getOperator = (problemType) => {
     switch (problemType) {
-      case 'addition': return '+';
-      case 'subtraction': return '-';
-      case 'multiplication': return '×';
-      case 'division': return '÷';
-      default: return '+';
+      case 'addition': return t('operators.addition');
+      case 'subtraction': return t('operators.subtraction');
+      case 'multiplication': return t('operators.multiplication');
+      case 'division': return t('operators.division');
+      default: return t('operators.addition');
     }
   };
 

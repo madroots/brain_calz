@@ -1,0 +1,99 @@
+{
+  "app": {
+    "title": "Brain Calz",
+    "welcome": "Bienvenido",
+    "loading": "Cargando...",
+    "logout": "Cerrar sesión"
+  },
+  "auth": {
+    "title": "Bienvenido",
+    "prompt": "Por favor ingrese su nombre de usuario para continuar:",
+    "usernamePlaceholder": "Ingrese su nombre de usuario",
+    "continueButton": "Continuar",
+    "error": {
+      "emptyUsername": "Por favor ingrese un nombre de usuario",
+      "loginFailed": "Error de inicio de sesión"
+    }
+  },
+  "home": {
+    "greeting": "¡Hola, {{username}}!",
+    "playButton": "JUGAR",
+    "statsButton": "Estadísticas del Jugador",
+    "settingsButton": "Configuración"
+  },
+  "play": {
+    "title": "Desafíos Diarios",
+    "otherGameModes": "Otros Modos de Juego",
+    "freeRunButton": "Entrenamiento Libre"
+  },
+  "challengeCarousel": {
+    "locked": "🔒",
+    "completed": "{{score}}/5"
+  },
+  "stats": {
+    "title": "Estadísticas del Jugador",
+    "greeting": "Estadísticas de {{username}}",
+    "currentStreak": "Racha Actual",
+    "maxStreak": "Racha Máxima",
+    "totalProblems": "Problemas Totales Intentados",
+    "accuracy": {
+      "title": "Resumen de Precisión",
+      "dailyChallenges": "Desafíos Diarios:",
+      "freeRun": "Entrenamiento Libre:",
+      "overall": "General:"
+    }
+  },
+  "settings": {
+    "title": "Configuración",
+    "darkMode": "Modo Oscuro",
+    "logoutButton": "Cerrar sesión"
+  },
+  "freeRun": {
+    "title": "Configuración de Entrenamiento Libre",
+    "modules": "Módulos",
+    "difficulty": "Nivel de Dificultad",
+    "problemCount": "Número de Problemas",
+    "easy": "Fácil",
+    "medium": "Medio",
+    "hard": "Difícil",
+    "startButton": "Iniciar Entrenamiento Libre",
+    "backButton": "Atrás"
+  },
+  "problem": {
+    "title": "Problema {{current}} de {{total}}",
+    "submitButton": "Enviar Respuesta",
+    "placeholder": "Ingrese su respuesta"
+  },
+  "results": {
+    "dailyComplete": "¡Desafío Diario Completo!",
+    "freeRunComplete": "¡Entrenamiento Libre Completo!",
+    "score": "Tu puntaje: {{score}} de {{total}}",
+    "accuracy": "Precisión: {{accuracy}}%",
+    "sessionSummary": "Resumen de Sesión",
+    "problemsAttempted": "Problemas intentados: {{count}}",
+    "correctAnswers": "Respuestas correctas: {{count}}",
+    "sessionAccuracy": "Precisión de sesión: {{accuracy}}%",
+    "continueButton": "Continuar Jugando"
+  },
+  "days": {
+    "mon": "Lun",
+    "tue": "Mar",
+    "wed": "Mié",
+    "thu": "Jue",
+    "fri": "Vie",
+    "sat": "Sáb",
+    "sun": "Dom"
+  },
+  "modules": {
+    "addition": "Suma",
+    "subtraction": "Resta",
+    "multiplication": "Multiplicación",
+    "division": "División"
+  },
+  "operators": {
+    "addition": "+",
+    "subtraction": "-",
+    "multiplication": "×",
+    "division": "÷"
+  }
+}

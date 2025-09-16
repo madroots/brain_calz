@@ -1,0 +1,99 @@
+{
+  "app": {
+    "title": "Brain Calz",
+    "welcome": "Welcome",
+    "loading": "Loading...",
+    "logout": "Logout"
+  },
+  "auth": {
+    "title": "Welcome",
+    "prompt": "Please enter your username to continue:",
+    "usernamePlaceholder": "Enter your username",
+    "continueButton": "Continue",
+    "error": {
+      "emptyUsername": "Please enter a username",
+      "loginFailed": "Login failed"
+    }
+  },
+  "home": {
+    "greeting": "Hello, {{username}}!",
+    "playButton": "PLAY",
+    "statsButton": "Player Stats",
+    "settingsButton": "Settings"
+  },
+  "play": {
+    "title": "Daily Challenges",
+    "otherGameModes": "Other Game Modes",
+    "freeRunButton": "Free Run"
+  },
+  "challengeCarousel": {
+    "locked": "🔒",
+    "completed": "{{score}}/5"
+  },
+  "stats": {
+    "title": "Player Stats",
+    "greeting": "{{username}}'s Statistics",
+    "currentStreak": "Current Streak",
+    "maxStreak": "Max Streak",
+    "totalProblems": "Total Problems Attempted",
+    "accuracy": {
+      "title": "Accuracy Overview",
+      "dailyChallenges": "Daily Challenges:",
+      "freeRun": "Free Run:",
+      "overall": "Overall:"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "darkMode": "Dark Mode",
+    "logoutButton": "Logout"
+  },
+  "freeRun": {
+    "title": "Free Run Configuration",
+    "modules": "Modules",
+    "difficulty": "Difficulty Level",
+    "problemCount": "Number of Problems",
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard",
+    "startButton": "Start Free Run",
+    "backButton": "Back"
+  },
+  "problem": {
+    "title": "Problem {{current}} of {{total}}",
+    "submitButton": "Submit Answer",
+    "placeholder": "Enter your answer"
+  },
+  "results": {
+    "dailyComplete": "Daily Challenge Complete!",
+    "freeRunComplete": "Free Run Complete!",
+    "score": "Your score: {{score}} out of {{total}}",
+    "accuracy": "Accuracy: {{accuracy}}%",
+    "sessionSummary": "Session Summary",
+    "problemsAttempted": "Problems attempted: {{count}}",
+    "correctAnswers": "Correct answers: {{count}}",
+    "sessionAccuracy": "Session accuracy: {{accuracy}}%",
+    "continueButton": "Continue Playing"
+  },
+  "days": {
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat",
+    "sun": "Sun"
+  },
+  "modules": {
+    "addition": "Addition",
+    "subtraction": "Subtraction",
+    "multiplication": "Multiplication",
+    "division": "Division"
+  },
+  "operators": {
+    "addition": "+",
+    "subtraction": "-",
+    "multiplication": "×",
+    "division": "÷"
+  }
+}
