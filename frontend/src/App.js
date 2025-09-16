@@ -23,6 +23,22 @@ function App() {
   });
   const [username, setUsername] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [theme, setTheme] = useState('light'); // 'light' or 'dark'
+
+  // Check for saved theme preference
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }, []);
+
+  // Toggle theme
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+  };
 
   // Check authentication status on app load
   useEffect(() => {
@@ -242,6 +258,10 @@ function App() {
   // Render authentication page
   const renderAuthPage = () => (
     <div className="auth-page">
+      <button className="theme-toggle" onClick={toggleTheme}>
+        {theme === 'light' ? '🌙' : '☀️'}
+      </button>
+      
       <h1>Brain Calz</h1>
       <p>Train your mental math skills daily!</p>
       
@@ -277,6 +297,10 @@ function App() {
   // Render loading page
   const renderLoadingPage = () => (
     <div className="loading-page">
+      <button className="theme-toggle" onClick={toggleTheme}>
+        {theme === 'light' ? '🌙' : '☀️'}
+      </button>
+      
       <h1>Brain Calz</h1>
       <p>Loading...</p>
     </div>
@@ -287,10 +311,16 @@ function App() {
     <div className="dashboard">
       <div className="dashboard-header">
         <h1>Brain Calz</h1>
-        <button onClick={handleLogout} className="logout-button">
-          Logout ({user?.username})
-        </button>
+        <div>
+          <button onClick={handleLogout} className="logout-button">
+            Logout ({user?.username})
+          </button>
+        </div>
       </div>
+      
+      <button className="theme-toggle" onClick={toggleTheme}>
+        {theme === 'light' ? '🌙' : '☀️'}
+      </button>
       
       <p>Train your mental math skills daily!</p>
       
@@ -376,6 +406,10 @@ function App() {
   // Render problem page
   const renderProblemPage = () => (
     <div className="problem-page">
+      <button className="theme-toggle" onClick={toggleTheme}>
+        {theme === 'light' ? '🌙' : '☀️'}
+      </button>
+      
       <div className="problem-header">
         <div className="progress">
           Problem {problemIndex} of {totalProblems}
@@ -408,6 +442,10 @@ function App() {
   // Render results page
   const renderResultsPage = () => (
     <div className="results-page">
+      <button className="theme-toggle" onClick={toggleTheme}>
+        {theme === 'light' ? '🌙' : '☀️'}
+      </button>
+      
       <h2>{freeRunSessionId ? 'Free Run Complete!' : 'Daily Challenge Complete!'}</h2>
       
       {results && (
@@ -484,6 +522,10 @@ function App() {
   // Render free run configuration
   const renderFreeRunConfig = () => (
     <div className="free-run-config">
+      <button className="theme-toggle" onClick={toggleTheme}>
+        {theme === 'light' ? '🌙' : '☀️'}
+      </button>
+      
       <h2>Free Run Configuration</h2>
       
       <div className="config-section">
