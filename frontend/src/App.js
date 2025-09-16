@@ -440,7 +440,7 @@ function App() {
       </div>
       
       <div className="language-selector">
-        <span>Language / Idioma / Langue</span>
+        <span>Language / Idioma / Langue / Jazyk</span>
         <select 
           value={language} 
           onChange={(e) => changeLanguage(e.target.value)}
@@ -449,6 +449,7 @@ function App() {
           <option value="en">English</option>
           <option value="es">Español</option>
           <option value="fr">Français</option>
+          <option value="sk">Slovenčina</option>
         </select>
       </div>
       

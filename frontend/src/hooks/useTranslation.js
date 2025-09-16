@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import enTranslations from '../translations/en.json';
 import esTranslations from '../translations/es.json';
 import frTranslations from '../translations/fr.json';
+import skTranslations from '../translations/sk.json';
 
 // Supported languages
 const SUPPORTED_LANGUAGES = {
   en: enTranslations,
   es: esTranslations,
-  fr: frTranslations
+  fr: frTranslations,
+  sk: skTranslations
 };
 
 // Default language
@@ -82,7 +84,8 @@ const useTranslation = () => {
     const languageNames = {
       en: 'English',
       es: 'Español',
-      fr: 'Français'
+      fr: 'Français',
+      sk: 'Slovenčina'
     };
     
     return languageNames[langCode] || langCode;

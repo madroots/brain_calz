@@ -1,0 +1,99 @@
+{
+  "app": {
+    "title": "Brain Calz",
+    "welcome": "Ahoj",
+    "loading": "Načítavam...",
+    "logout": "Odhlásiť sa"
+  },
+  "auth": {
+    "title": "Vitaj",
+    "prompt": "Prosím, zadaj svoje hráčske meno:",
+    "usernamePlaceholder": "Zadaj meno",
+    "continueButton": "Pokračovať",
+    "error": {
+      "emptyUsername": "Prosím, zadaj svoje hráčske meno",
+      "loginFailed": "Prihlásenie zlyhalo"
+    }
+  },
+  "home": {
+    "greeting": "Ahoj, {{username}}!",
+    "playButton": "HRAŤ",
+    "statsButton": "Štatistiky hráča",
+    "settingsButton": "Nastavenia"
+  },
+  "play": {
+    "title": "Denné výzvy",
+    "otherGameModes": "Ďalšie hracie módy",
+    "freeRunButton": "Free Run"
+  },
+  "challengeCarousel": {
+    "locked": "🔒",
+    "completed": "{{score}}/5"
+  },
+  "stats": {
+    "title": "Štatistiky hráča",
+    "greeting": "Štatistika hráča {{username}}",
+    "currentStreak": "Aktuálne dní po sebe",
+    "maxStreak": "Maximálne dní po sebe",
+    "totalProblems": "Počet počítaných príkladov dokopy",
+    "accuracy": {
+      "title": "Celková presnosť",
+      "dailyChallenges": "Denné výzvy:",
+      "freeRun": "Free Run:",
+      "overall": "Celkovo:"
+    }
+  },
+  "settings": {
+    "title": "Nastavenia",
+    "darkMode": "Tmavý režim",
+    "logoutButton": "Odhlásiť"
+  },
+  "freeRun": {
+    "title": "Free Run nastavenia",
+    "modules": "Moduly",
+    "difficulty": "Úroveň náročnosti",
+    "problemCount": "Počet príkladov",
+    "easy": "Ľahká",
+    "medium": "Stredná",
+    "hard": "Ťažká",
+    "startButton": "Hrať Free Run",
+    "backButton": "Naspäť"
+  },
+  "problem": {
+    "title": "Príklad {{current}} z {{total}}",
+    "submitButton": "Potvrď odpoveď",
+    "placeholder": "Zadaj odpoveď"
+  },
+  "results": {
+    "dailyComplete": "Denná výzva dokončená!",
+    "freeRunComplete": "Free Run dokončený!",
+    "score": "Tvoje skóre: {{score}} z {{total}}",
+    "accuracy": "Presnosť: {{accuracy}}%",
+    "sessionSummary": "Zhrnutie hry",
+    "problemsAttempted": "Počet príkladov: {{count}}",
+    "correctAnswers": "Správne odpovede: {{count}}",
+    "sessionAccuracy": "Presnosť v poslednej hre: {{accuracy}}%",
+    "continueButton": "Pokračovať"
+  },
+  "days": {
+    "mon": "Pon",
+    "tue": "Uto",
+    "wed": "Str",
+    "thu": "Štv",
+    "fri": "Pia",
+    "sat": "Sob",
+    "sun": "Ned"
+  },
+  "modules": {
+    "addition": "Sčítavanie",
+    "subtraction": "Odčítavanie",
+    "multiplication": "Násobenie",
+    "division": "Delenie"
+  },
+  "operators": {
+    "addition": "+",
+    "subtraction": "-",
+    "multiplication": "×",
+    "division": "÷"
+  }
+}
