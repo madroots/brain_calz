@@ -1,87 +1,109 @@
-/* Light theme variables */
+/* New Color Theme Variables */
 :root {
-  --bg-color: #ffffff;
-  --text-color: #2c3e50;
-  --header-color: #2c3e50;
-  --card-bg: #ecf0f1;
-  --card-text: #2c3e50;
-  --primary-btn-bg: #3498db;
-  --primary-btn-hover: #2980b9;
-  --primary-btn-text: #ffffff;
-  --secondary-btn-bg: #ecf0f1;
-  --secondary-btn-hover: #bdc3c7;
-  --secondary-btn-text: #2c3e50;
-  --stat-card-bg: #3498db;
-  --stat-card-text: #ffffff;
-  --accuracy-bg: #ecf0f1;
-  --accuracy-item-bg: #ffffff;
-  --day-card-bg: #bdc3c7;
-  --day-card-text: #7f8c8d;
-  --day-card-completed-bg: #2ecc71;
-  --day-card-completed-text: #ffffff;
-  --day-card-today-bg: #3498db;
-  --day-card-today-text: #ffffff;
-  --day-card-future-bg: #ddd;
-  --day-card-future-text: #999;
-  --day-card-past-bg: #bdc3c7;
-  --day-card-past-text: #7f8c8d;
-  --problem-bg: #ffffff;
-  --problem-text: #2c3e50;
-  --input-border: #3498db;
-  --error-bg: #fadbd8;
-  --error-text: #e74c3c;
-  --auth-form-bg: #ecf0f1;
-  --logout-btn-bg: #e74c3c;
-  --logout-btn-hover: #c0392b;
-  --logout-btn-text: #ffffff;
-  --settings-btn-bg: #95a5a6;
-  --settings-btn-hover: #7f8c8d;
-  --carousel-highlight: #3498db;
-  --toggle-bg: #bdc3c7;
-  --toggle-checked-bg: #3498db;
+  /* Primary colors */
+  --primary: #4F46E5; /* Indigo Blue */
+  --secondary: #10B981; /* Emerald Green */
+  --error: #EF4444; /* Rose Red */
+  --success: #84CC16; /* Lime Green */
+  --neutral: #64748B; /* Slate Gray */
+  
+  /* Backgrounds */
+  --bg-light: #F9FAFB; /* Light gray */
+  --bg-dark: #111827; /* Very dark gray */
+  
+  /* Text colors */
+  --text-light: #111827; /* Almost black */
+  --text-dark: #F9FAFB; /* Near white */
+  
+  /* Light theme variables */
+  --bg-color: var(--bg-light);
+  --text-color: var(--text-light);
+  --header-color: var(--text-light);
+  --card-bg: var(--bg-light);
+  --card-text: var(--text-light);
+  --primary-btn-bg: var(--primary);
+  --primary-btn-hover: #4338CA; /* Slightly darker indigo */
+  --primary-btn-text: var(--text-dark);
+  --secondary-btn-bg: var(--secondary);
+  --secondary-btn-hover: #059669; /* Slightly darker emerald */
+  --secondary-btn-text: var(--text-dark);
+  --stat-card-bg: var(--primary);
+  --stat-card-text: var(--text-dark);
+  --accuracy-bg: #E2E8F0; /* Light slate gray */
+  --accuracy-item-bg: var(--bg-light);
+  --day-card-bg: var(--neutral);
+  --day-card-text: var(--text-dark);
+  --day-card-completed-bg: var(--primary);
+  --day-card-completed-text: var(--text-dark);
+  --day-card-today-bg: var(--primary);
+  --day-card-today-text: var(--text-dark);
+  --day-card-future-bg: var(--neutral);
+  --day-card-future-text: var(--text-dark);
+  --day-card-past-bg: var(--neutral);
+  --day-card-past-text: var(--text-dark);
+  --problem-bg: var(--bg-light);
+  --problem-text: var(--text-light);
+  --input-border: var(--primary);
+  --error-bg: #FECACA; /* Light rose red */
+  --error-text: var(--error);
+  --auth-form-bg: var(--bg-light);
+  --logout-btn-bg: var(--error);
+  --logout-btn-hover: #DC2626; /* Darker rose red */
+  --logout-btn-text: var(--text-dark);
+  --settings-btn-bg: var(--neutral);
+  --settings-btn-hover: #475569; /* Darker slate */
+  --settings-btn-text: var(--text-dark);
+  --carousel-highlight: var(--primary);
+  --toggle-bg: #CBD5E1; /* Light slate */
+  --toggle-checked-bg: var(--primary);
+  --success-bg: #D9F99D; /* Light lime green */
+  --success-text: var(--text-light);
 }
 
 /* Dark theme variables */
 [data-theme="dark"] {
-  --bg-color: #1a1a1a;
-  --text-color: #ecf0f1;
-  --header-color: #ecf0f1;
-  --card-bg: #2c2c2c;
-  --card-text: #ecf0f1;
-  --primary-btn-bg: #3498db;
-  --primary-btn-hover: #5dade2;
-  --primary-btn-text: #ffffff;
-  --secondary-btn-bg: #3c3c3c;
-  --secondary-btn-hover: #4a4a4a;
-  --secondary-btn-text: #ecf0f1;
-  --stat-card-bg: #2980b9;
-  --stat-card-text: #ffffff;
-  --accuracy-bg: #2c2c2c;
-  --accuracy-item-bg: #3c3c3c;
-  --day-card-bg: #3c3c3c;
-  --day-card-text: #bdc3c7;
-  --day-card-completed-bg: #27ae60;
-  --day-card-completed-text: #ffffff;
-  --day-card-today-bg: #3498db;
-  --day-card-today-text: #ffffff;
-  --day-card-future-bg: #2c2c2c;
-  --day-card-future-text: #7f8c8d;
-  --day-card-past-bg: #3c3c3c;
-  --day-card-past-text: #bdc3c7;
-  --problem-bg: #2c2c2c;
-  --problem-text: #ecf0f1;
-  --input-border: #3498db;
-  --error-bg: #7b241c;
-  --error-text: #ec7063;
-  --auth-form-bg: #2c2c2c;
-  --logout-btn-bg: #e74c3c;
-  --logout-btn-hover: #ec7063;
-  --logout-btn-text: #ffffff;
-  --settings-btn-bg: #3c3c3c;
-  --settings-btn-hover: #4a4a4a;
-  --carousel-highlight: #3498db;
-  --toggle-bg: #3c3c3c;
-  --toggle-checked-bg: #3498db;
+  --bg-color: var(--bg-dark);
+  --text-color: var(--text-dark);
+  --header-color: var(--text-dark);
+  --card-bg: #1E293B; /* Slightly lighter than bg-dark */
+  --card-text: var(--text-dark);
+  --primary-btn-bg: var(--primary);
+  --primary-btn-hover: #6366F1; /* Slightly lighter indigo */
+  --primary-btn-text: var(--text-dark);
+  --secondary-btn-bg: var(--secondary);
+  --secondary-btn-hover: #34D399; /* Slightly lighter emerald */
+  --secondary-btn-text: var(--text-dark);
+  --stat-card-bg: var(--primary);
+  --stat-card-text: var(--text-dark);
+  --accuracy-bg: #334155; /* Darker slate */
+  --accuracy-item-bg: #1E293B; /* Same as card-bg */
+  --day-card-bg: var(--neutral);
+  --day-card-text: var(--text-dark);
+  --day-card-completed-bg: var(--primary);
+  --day-card-completed-text: var(--text-dark);
+  --day-card-today-bg: var(--primary);
+  --day-card-today-text: var(--text-dark);
+  --day-card-future-bg: var(--neutral);
+  --day-card-future-text: var(--text-dark);
+  --day-card-past-bg: var(--neutral);
+  --day-card-past-text: var(--text-dark);
+  --problem-bg: #1E293B; /* Same as card-bg */
+  --problem-text: var(--text-dark);
+  --input-border: var(--primary);
+  --error-bg: #7F1D1D; /* Darker rose red */
+  --error-text: #FECACA; /* Lighter rose red */
+  --auth-form-bg: #1E293B; /* Same as card-bg */
+  --logout-btn-bg: var(--error);
+  --logout-btn-hover: #F87171; /* Lighter rose red */
+  --logout-btn-text: var(--text-dark);
+  --settings-btn-bg: var(--neutral);
+  --settings-btn-hover: #94A3B8; /* Lighter slate */
+  --settings-btn-text: var(--text-dark);
+  --carousel-highlight: var(--primary);
+  --toggle-bg: #475569; /* Darker slate */
+  --toggle-checked-bg: var(--primary);
+  --success-bg: #65A30D; /* Darker lime green */
+  --success-text: var(--text-dark);
 }
 
 /* Global styles */
@@ -152,8 +174,8 @@
 
 /* Stats button */
 .stats-button {
-  background-color: var(--settings-btn-bg);
-  color: var(--primary-btn-text);
+  background-color: var(--secondary-btn-bg);
+  color: var(--secondary-btn-text);
   border: none;
   border-radius: 50px;
   padding: 15px 30px;
@@ -162,17 +184,19 @@
   margin: 10px 0;
   width: 80%;
   max-width: 300px;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .stats-button:hover {
-  background-color: var(--settings-btn-hover);
+  background-color: var(--secondary-btn-hover);
+  transform: scale(1.02);
 }
 
 /* Settings button */
 .settings-button {
   background-color: var(--settings-btn-bg);
-  color: var(--primary-btn-text);
+  color: var(--settings-btn-text);
   border: none;
   border-radius: 50px;
   padding: 15px 30px;
@@ -181,11 +205,13 @@
   margin: 10px 0;
   width: 80%;
   max-width: 300px;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .settings-button:hover {
   background-color: var(--settings-btn-hover);
+  transform: scale(1.02);
 }
 
 /* Game modes section */
@@ -223,8 +249,8 @@
 .challenge-carousel-container {
   width: 100%;
   margin: 30px 0;
-  position: relative;
   overflow: hidden;
+  position: relative;
 }
 
 .challenge-carousel {
@@ -256,26 +282,29 @@
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   background-color: var(--day-card-bg);
   color: var(--day-card-text);
-  scroll-snap-align: center;
+  opacity: 0.5; /* Default opacity for future/missed days */
 }
 
 /* Future days */
 .challenge-day-card.future {
   background-color: var(--day-card-future-bg);
   color: var(--day-card-future-text);
-  opacity: 0.7;
+  opacity: 0.5;
 }
 
-/* Past days */
+/* Past days (missed) */
 .challenge-day-card.past {
   background-color: var(--day-card-past-bg);
   color: var(--day-card-past-text);
+  opacity: 0.5;
+  border: 2px solid var(--error); /* Rose red border for missed days */
 }
 
 /* Completed days */
 .challenge-day-card.completed {
   background-color: var(--day-card-completed-bg);
   color: var(--day-card-completed-text);
+  opacity: 1;
 }
 
 /* Today's challenge */
@@ -285,6 +314,7 @@
   transform: scale(1.1);
   z-index: 10;
   box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+  opacity: 1;
 }
 
 .challenge-day-card.today .day-name {
@@ -374,6 +404,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
+  position: relative;
 }
 
 .screen-header h1 {
@@ -385,7 +416,7 @@
 
 .back-button {
   background-color: var(--settings-btn-bg);
-  color: var(--primary-btn-text);
+  color: var(--settings-btn-text);
   border: none;
   border-radius: 50%;
   width: 40px;
@@ -397,7 +428,7 @@
   justify-content: center;
   transition: background-color 0.3s;
   position: absolute;
-  left: 20px;
+  left: 0;
 }
 
 .back-button:hover {
@@ -644,7 +675,7 @@ input:checked + .slider:before {
 
 .accuracy-value {
   font-weight: bold;
-  color: #27ae60;
+  color: var(--secondary);
 }
 
 .weekly-overview {
@@ -670,15 +701,23 @@ input:checked + .slider:before {
   text-align: center;
   color: var(--day-card-text);
   transition: background-color 0.3s, color 0.3s;
+  opacity: 0.5;
 }
 
 .day-card.completed {
   background-color: var(--day-card-completed-bg);
   color: var(--day-card-completed-text);
+  opacity: 1;
 }
 
 .day-card.today {
-  border: 2px solid var(--day-card-today-border);
+  border: 2px solid var(--primary);
+  opacity: 1;
+}
+
+.day-card.past:not(.completed) {
+  border: 2px solid var(--error);
+  opacity: 0.5;
 }
 
 .day-card .day-name {
@@ -799,7 +838,7 @@ input:checked + .slider:before {
 
 .accuracy-display {
   font-size: 24px;
-  color: #27ae60;
+  color: var(--secondary);
   font-weight: bold;
   margin-bottom: 20px;
 }
@@ -872,4 +911,15 @@ button:disabled {
 
 button:disabled:hover {
   background-color: var(--day-card-bg);
+}
+
+/* Success message styling */
+.success-message {
+  color: var(--success-text);
+  background-color: var(--success-bg);
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  text-align: center;
+  transition: background-color 0.3s, color 0.3s;
 }
