@@ -1,0 +1,28 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    depends_on:
+      - backend
+    # Frontend will be exposed on port 3001 for your reverse proxy to connect to
+    ports:
+      - "3001:80"
+    # In production, we don't need the volume mappings for development
+    environment:
+      - REACT_APP_API_URL=/api
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    environment:
+      - FLASK_ENV=production
+      - DATABASE_URL=sqlite:///brain_calz.db
+      - ALLOWED_ORIGINS=http://localhost:3001
+    # Database will be persisted in a volume
+    volumes:
+      - brain_calz_data:/app
+
+volumes:
+  brain_calz_data:

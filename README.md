@@ -23,7 +23,7 @@ Brain Calz is a mental math training application that helps users improve their 
 
 - Docker and Docker Compose installed
 
-### Running the Application
+### Running the Application for Development
 
 1. Clone the repository
 2. Navigate to the project directory
@@ -50,11 +50,73 @@ To stop the application, press `Ctrl+C` in the terminal where Docker Compose is 
 docker-compose down
 ```
 
+## Production Deployment
+
+For production deployment, a separate configuration is provided that includes:
+
+1. A production-ready Docker Compose file (`docker-compose.prod.yml`)
+2. Production Dockerfiles for both frontend and backend
+3. Nginx configuration for serving the frontend and proxying API requests
+
+### Deploying to Production
+
+1. Clone the repository to your server
+2. Navigate to the project directory
+3. Start the production services:
+
+```bash
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+This will start the application on port 3001. The frontend container handles both serving the React application and proxying API requests to the backend container internally.
+
+### Production Configuration
+
+The production setup includes:
+- Frontend served by Nginx
+- Backend running with Gunicorn for better performance
+- Data persistence through Docker volumes
+- Internal proxying of API requests from frontend to backend
+
+### Reverse Proxy Configuration
+
+If you're using an existing reverse proxy (nginx, Apache, etc.), you only need to forward requests to port 3001:
+
+#### For Nginx:
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com;
+    
+    location / {
+        proxy_pass http://localhost:3001;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+#### For Apache:
+```apache
+<VirtualHost *:80>
+    ServerName yourdomain.com
+    
+    ProxyPreserveHost On
+    
+    ProxyPass / http://localhost:3001/
+    ProxyPassReverse / http://localhost:3001/
+</VirtualHost>
+```
+
 ## Application Structure
 
 - `/frontend`: React frontend application
 - `/backend`: Python Flask backend API
-- `docker-compose.yml`: Docker Compose configuration
+- `docker-compose.yml`: Docker Compose configuration for development
+- `docker-compose.prod.yml`: Docker Compose configuration for production
+- `DEPLOYMENT.md`: Detailed deployment instructions
 
 ## API Endpoints
 
