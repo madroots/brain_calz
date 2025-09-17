@@ -10,6 +10,8 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000/api
 
   backend:
     build:
@@ -22,3 +24,4 @@ services:
     environment:
       - FLASK_ENV=development
       - DATABASE_URL=sqlite:///brain_calz.db
+      - ALLOWED_ORIGINS=http://localhost:3001,http://localhost:3000

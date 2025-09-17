@@ -8,7 +8,13 @@ import os
 
 app = Flask(__name__)
 app.secret_key = 'brain_calz_secret_key'  # In production, use a secure random key
-CORS(app, supports_credentials=True, origins=["http://localhost:3001"])
+
+# Get allowed origins from environment variable or use defaults
+allowed_origins = os.environ.get('ALLOWED_ORIGINS', 'http://localhost:3001,http://localhost:3000,http://127.0.0.1:3001,http://127.0.0.1:3000')
+allowed_origins_list = [origin.strip() for origin in allowed_origins.split(',')]
+
+# Configure CORS with allowed origins
+CORS(app, supports_credentials=True, origins=allowed_origins_list)
 
 # Database configuration
 basedir = os.path.abspath(os.path.dirname(__file__))

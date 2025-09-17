@@ -1,8 +1,27 @@
 import axios from 'axios';
 
+// Determine the base URL based on the environment
+const getBaseURL = () => {
+  // Check if REACT_APP_API_URL is set in environment variables
+  if (process.env.REACT_APP_API_URL) {
+    return process.env.REACT_APP_API_URL;
+  }
+  
+  // In development, use localhost:5000
+  if (process.env.NODE_ENV === 'development') {
+    return 'http://localhost:5000/api';
+  }
+  
+  // In production, if no environment variable is set, 
+  // assume API is on the same host but port 5000
+  const protocol = window.location.protocol;
+  const hostname = window.location.hostname;
+  return `${protocol}//${hostname}:5000/api`;
+};
+
 // Create an axios instance with the base URL for the backend API
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: getBaseURL(),
   withCredentials: true, // Include credentials (cookies) in requests
 });
 
