@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import api from './api';
 import useTranslation from './hooks/useTranslation';
@@ -303,17 +303,102 @@ function App() {
     </div>
   );
 
-  // Render play screen
+  // Render play screen with improved carousel
   const renderPlayScreen = () => {
-    // Get the days to display (3 days: previous, current, next)
-    const startIndex = Math.max(0, carouselIndex - 1);
-    const endIndex = Math.min(weeklyChallenges.length, carouselIndex + 2);
-    const visibleDays = weeklyChallenges.slice(startIndex, endIndex);
+    const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
     
-    // Pad with empty days if needed
-    while (visibleDays.length < 3) {
-      visibleDays.push(null);
-    }
+    // Find today's challenge index
+    useEffect(() => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      // Find today's challenge index
+      let todayIndex = 0;
+      for (let i = 0; i < weeklyChallenges.length; i++) {
+        const challengeDate = new Date(weeklyChallenges[i].date);
+        challengeDate.setHours(0, 0, 0, 0);
+        if (challengeDate.getTime() === today.getTime()) {
+          todayIndex = i;
+          break;
+        }
+      }
+      
+      setCurrentCarouselIndex(todayIndex);
+    }, [weeklyChallenges]);
+    
+    // Function to get card position classes
+    const getCardPositionClass = (index) => {
+      const diff = index - currentCarouselIndex;
+      
+      if (diff === 0) return 'center';
+      if (diff === -1) return 'left';
+      if (diff === 1) return 'right';
+      if (diff === -2) return 'far-left';
+      if (diff === 2) return 'far-right';
+      return '';
+    };
+    
+    // Function to get card state classes
+    const getCardStateClass = (challenge) => {
+      const challengeDate = new Date(challenge.date);
+      challengeDate.setHours(0, 0, 0, 0);
+      const todayDate = new Date();
+      todayDate.setHours(0, 0, 0, 0);
+      
+      if (challengeDate > todayDate) {
+        return 'future';
+      } else if (challenge.completed) {
+        return 'completed';
+      } else if (challengeDate < todayDate) {
+        return 'missed';
+      }
+      return '';
+    };
+    
+    // Function to get status icon
+    const getStatusIcon = (challenge) => {
+      const challengeDate = new Date(challenge.date);
+      challengeDate.setHours(0, 0, 0, 0);
+      const todayDate = new Date();
+      todayDate.setHours(0, 0, 0, 0);
+      
+      if (challengeDate > todayDate) {
+        return '🔒';
+      } else if (challenge.completed) {
+        return '✔';
+      } else if (challengeDate < todayDate) {
+        return '✖';
+      }
+      return '';
+    };
+    
+    // Function to format date
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    };
+    
+    // Function to handle card click
+    const handleCardClick = (challenge, index) => {
+      const challengeDate = new Date(challenge.date);
+      challengeDate.setHours(0, 0, 0, 0);
+      const todayDate = new Date();
+      todayDate.setHours(0, 0, 0, 0);
+      
+      // Future days are not clickable
+      if (challengeDate > todayDate) {
+        return;
+      }
+      
+      // Completed/past challenges show results
+      if (challenge.completed || challengeDate < todayDate) {
+        // TODO: Show results page/modal
+        alert(`Challenge completed with score: ${challenge.score}/5`);
+      } else {
+        // Start today's challenge
+        startDailyChallenge(challenge.date);
+      }
+    };
     
     return (
       <div className="home-screen">
@@ -329,72 +414,67 @@ function App() {
         </div>
         
         <div className="challenge-carousel-container">
-          {carouselIndex > 0 && (
-            <button className="carousel-nav prev" onClick={goToPrevDay}>
-              ‹
-            </button>
-          )}
-          
-          <div className="challenge-carousel">
-            {visibleDays.map((challenge, index) => {
-              if (!challenge) {
-                return (
-                  <div key={index} className="challenge-day-card future">
-                    <div className="day-name">-</div>
-                    <div className="day-date">-</div>
-                  </div>
-                );
-              }
-              
-              const date = new Date(challenge.date);
-              const dayNames = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-              const isToday = date.toDateString() === new Date().toDateString();
-              const isFuture = date > new Date();
-              const isPast = date < new Date();
-              
-              // Determine card class
-              let cardClass = "challenge-day-card";
-              if (isToday) {
-                cardClass += " today";
-              } else if (isFuture) {
-                cardClass += " future";
-              } else if (isPast && challenge.completed) {
-                cardClass += " completed";
-              } else if (isPast && !challenge.completed) {
-                cardClass += " past";
-              }
+          <div className="carousel-track">
+            {weeklyChallenges.map((challenge, index) => {
+              const positionClass = getCardPositionClass(index);
+              const stateClass = getCardStateClass(challenge);
+              const statusIcon = getStatusIcon(challenge);
+              const challengeDate = new Date(challenge.date);
+              const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+              const isToday = challengeDate.toDateString() === new Date().toDateString();
               
               return (
                 <div 
-                  key={index} 
-                  className={cardClass}
-                  onClick={() => {
-                    if (!isFuture) {
-                      if (challenge.completed) {
-                        // Maybe show a summary or allow review?
-                        alert(`${t('results.dailyComplete')} ${t('challengeCarousel.completed', { score: challenge.score })}`);
-                      } else {
-                        // Start the challenge
-                        startDailyChallenge(challenge.date);
-                      }
-                    }
-                  }}
+                  key={index}
+                  className={`carousel-card ${positionClass} ${stateClass}`}
+                  onClick={() => handleCardClick(challenge, index)}
                 >
-                  <div className="day-name">{t(`days.${dayNames[date.getDay()]}`)}</div>
-                  <div className="day-date">{date.getDate()}</div>
+                  <div className="card-day">
+                    {isToday ? 'TODAY' : dayNames[challengeDate.getDay()]}
+                  </div>
+                  <div className="card-date">
+                    {formatDate(challenge.date)}
+                  </div>
+                  <div className="card-status">
+                    {statusIcon}
+                  </div>
+                  
                   {challenge.completed && (
-                    <div className="score">{challenge.score}/5</div>
+                    <div className="card-score">
+                      {challenge.score}/5
+                    </div>
                   )}
-                  {isFuture && (
-                    <div className="score">{t('challengeCarousel.locked')}</div>
+                  
+                  {!challenge.completed && challengeDate <= new Date() && challengeDate.toDateString() === new Date().toDateString() && (
+                    <button 
+                      className="start-button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        startDailyChallenge(challenge.date);
+                      }}
+                    >
+                      Start
+                    </button>
                   )}
                 </div>
               );
             })}
           </div>
           
-          {carouselIndex < weeklyChallenges.length - 1 && (
-            <button className="carousel-nav next" onClick={goToNextDay}>
+          {currentCarouselIndex > 0 && (
+            <button 
+              className="carousel-nav prev" 
+              onClick={() => setCurrentCarouselIndex(currentCarouselIndex - 1)}
+            >
+              ‹
+            </button>
+          )}
+          
+          {currentCarouselIndex < weeklyChallenges.length - 1 && (
+            <button 
+              className="carousel-nav next" 
+              onClick={() => setCurrentCarouselIndex(currentCarouselIndex + 1)}
+            >
               ›
             </button>
           )}

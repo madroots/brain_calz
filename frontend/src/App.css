@@ -251,102 +251,152 @@
   margin: 30px 0;
   overflow: hidden;
   position: relative;
+  height: 200px; /* Fixed height for consistent sizing */
 }
 
 .challenge-carousel {
   display: flex;
-  transition: transform 0.3s ease-out;
-  padding: 20px 0;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none; /* Hide scrollbar for Firefox */
-  -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  position: relative;
 }
 
-.challenge-carousel::-webkit-scrollbar {
-  display: none; /* Hide scrollbar for Chrome/Safari */
+.carousel-track {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
-.challenge-day-card {
-  flex: 0 0 30%;
-  margin: 0 5%;
-  padding: 20px 10px;
-  border-radius: 15px;
+.carousel-card {
+  position: absolute;
+  width: 140px;
+  height: 180px;
+  background: var(--day-card-bg);
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s ease;
-  min-height: 120px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  background-color: var(--day-card-bg);
-  color: var(--day-card-text);
-  opacity: 0.5; /* Default opacity for future/missed days */
+  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 2px solid transparent;
+  opacity: 0.7;
+  transform: scale(0.85);
+  z-index: 1;
 }
 
-/* Future days */
-.challenge-day-card.future {
-  background-color: var(--day-card-future-bg);
+/* Center card (current/focused card) */
+.carousel-card.center {
+  background: var(--primary);
+  color: var(--text-dark);
+  transform: scale(1.0);
+  opacity: 1;
+  z-index: 10;
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.3), 0 0 0 2px var(--primary);
+}
+
+/* Left cards (past days) */
+.carousel-card.left {
+  transform: translateX(-180px) scale(0.85);
+  opacity: 0.8;
+  z-index: 5;
+}
+
+/* Right cards (future days) */
+.carousel-card.right {
+  transform: translateX(180px) scale(0.85);
+  opacity: 0.8;
+  z-index: 5;
+}
+
+/* Far left cards (older past days) */
+.carousel-card.far-left {
+  transform: translateX(-360px) scale(0.7);
+  opacity: 0.6;
+  z-index: 3;
+}
+
+/* Far right cards (distant future days) */
+.carousel-card.far-right {
+  transform: translateX(360px) scale(0.7);
+  opacity: 0.6;
+  z-index: 3;
+}
+
+/* Card states */
+.carousel-card.completed {
+  background: var(--day-card-completed-bg);
+  color: var(--day-card-completed-text);
+  border-color: var(--day-card-completed-bg);
+}
+
+.carousel-card.missed {
+  background: var(--error-bg);
+  color: var(--error-text);
+  border-color: var(--error);
+}
+
+.carousel-card.future {
+  background: var(--day-card-future-bg);
   color: var(--day-card-future-text);
   opacity: 0.5;
+  border-color: var(--day-card-future-bg);
 }
 
-/* Past days (missed) */
-.challenge-day-card.past {
-  background-color: var(--day-card-past-bg);
-  color: var(--day-card-past-text);
-  opacity: 0.5;
-  border: 2px solid var(--error); /* Rose red border for missed days */
-}
-
-/* Completed days */
-.challenge-day-card.completed {
-  background-color: var(--day-card-completed-bg);
-  color: var(--day-card-completed-text);
-  opacity: 1;
-}
-
-/* Today's challenge */
-.challenge-day-card.today {
-  background-color: var(--day-card-today-bg);
-  color: var(--day-card-today-text);
-  transform: scale(1.1);
-  z-index: 10;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-  opacity: 1;
-}
-
-.challenge-day-card.today .day-name {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.challenge-day-card.today .day-date {
-  font-size: 24px;
-  font-weight: bold;
-  margin: 10px 0;
-}
-
-.challenge-day-card.today .score {
+/* Card content */
+.card-day {
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 600;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* Day card elements */
-.challenge-day-card .day-name {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.challenge-day-card .day-date {
+.card-date {
   font-size: 20px;
-  margin: 8px 0;
+  font-weight: 700;
+  margin-bottom: 12px;
 }
 
-.challenge-day-card .score {
+.card-status {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.card-score {
+  font-size: 16px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.start-button {
+  background: var(--secondary);
+  color: var(--text-dark);
+  border: none;
+  border-radius: 20px;
+  padding: 6px 16px;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 4px;
+}
+
+.start-button:hover {
+  background: var(--secondary-btn-hover);
+  transform: scale(1.05);
+}
+
+.start-button:active {
+  transform: scale(0.98);
 }
 
 /* Navigation arrows */
@@ -354,8 +404,8 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0,0,0,0.3);
-  color: white;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--text-light);
   border: none;
   border-radius: 50%;
   width: 40px;
@@ -366,18 +416,85 @@
   align-items: center;
   justify-content: center;
   z-index: 20;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
 }
 
 .carousel-nav:hover {
-  background: rgba(0,0,0,0.5);
+  background: white;
+  transform: scale(1.1);
+}
+
+.carousel-nav:active {
+  transform: scale(0.95);
 }
 
 .carousel-nav.prev {
-  left: 10px;
+  left: 16px;
 }
 
 .carousel-nav.next {
-  right: 10px;
+  right: 16px;
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .carousel-nav {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-dark);
+}
+
+[data-theme="dark"] .carousel-nav:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Touch feedback */
+.carousel-card:active {
+  transform: scale(0.95);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .carousel-card {
+    width: 120px;
+    height: 160px;
+  }
+  
+  .carousel-card.center {
+    transform: scale(1.0);
+  }
+  
+  .carousel-card.left {
+    transform: translateX(-150px) scale(0.85);
+  }
+  
+  .carousel-card.right {
+    transform: translateX(150px) scale(0.85);
+  }
+  
+  .carousel-card.far-left {
+    transform: translateX(-300px) scale(0.7);
+  }
+  
+  .carousel-card.far-right {
+    transform: translateX(300px) scale(0.7);
+  }
+  
+  .card-day {
+    font-size: 14px;
+  }
+  
+  .card-date {
+    font-size: 18px;
+  }
+  
+  .card-status {
+    font-size: 20px;
+  }
+  
+  .card-score {
+    font-size: 14px;
+    padding: 3px 10px;
+  }
 }
 
 /* Settings screen */
