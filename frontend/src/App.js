@@ -747,6 +747,17 @@ function App() {
     </div>
   );
 
+  // Function to get operator symbol
+  const getOperator = (problemType) => {
+    switch (problemType) {
+      case 'addition': return t('operators.addition');
+      case 'subtraction': return t('operators.subtraction');
+      case 'multiplication': return t('operators.multiplication');
+      case 'division': return t('operators.division');
+      default: return t('operators.addition');
+    }
+  };
+  
   // Function to get card position classes
   const getCardPositionClass = (index) => {
     const diff = index - carouselIndex;

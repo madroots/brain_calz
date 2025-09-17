@@ -522,6 +522,7 @@
   align-items: center;
   margin-bottom: 30px;
   position: relative;
+  width: 100%;
 }
 
 .screen-header h1 {
@@ -533,7 +534,7 @@
 
 .back-button {
   background-color: var(--settings-btn-bg);
-  color: var(--settings-btn-text);
+  color: var(--primary-btn-text);
   border: none;
   border-radius: 50%;
   width: 40px;
