@@ -13,10 +13,8 @@ const getBaseURL = () => {
   }
   
   // In production, if no environment variable is set, 
-  // assume API is on the same host but port 5000
-  const protocol = window.location.protocol;
-  const hostname = window.location.hostname;
-  return `${protocol}//${hostname}:5000/api`;
+  // assume API is on the same host but on the /api path
+  return '/api';
 };
 
 // Create an axios instance with the base URL for the backend API
