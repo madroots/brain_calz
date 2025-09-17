@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import api from './api';
 import useTranslation from './hooks/useTranslation';
@@ -303,195 +303,98 @@ function App() {
     </div>
   );
 
-  // Render play screen with improved carousel
-  const renderPlayScreen = () => {
-    const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
-    
-    // Find today's challenge index
-    useEffect(() => {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
-      // Find today's challenge index
-      let todayIndex = 0;
-      for (let i = 0; i < weeklyChallenges.length; i++) {
-        const challengeDate = new Date(weeklyChallenges[i].date);
-        challengeDate.setHours(0, 0, 0, 0);
-        if (challengeDate.getTime() === today.getTime()) {
-          todayIndex = i;
-          break;
-        }
-      }
-      
-      setCurrentCarouselIndex(todayIndex);
-    }, [weeklyChallenges]);
-    
-    // Function to get card position classes
-    const getCardPositionClass = (index) => {
-      const diff = index - currentCarouselIndex;
-      
-      if (diff === 0) return 'center';
-      if (diff === -1) return 'left';
-      if (diff === 1) return 'right';
-      if (diff === -2) return 'far-left';
-      if (diff === 2) return 'far-right';
-      return '';
-    };
-    
-    // Function to get card state classes
-    const getCardStateClass = (challenge) => {
-      const challengeDate = new Date(challenge.date);
-      challengeDate.setHours(0, 0, 0, 0);
-      const todayDate = new Date();
-      todayDate.setHours(0, 0, 0, 0);
-      
-      if (challengeDate > todayDate) {
-        return 'future';
-      } else if (challenge.completed) {
-        return 'completed';
-      } else if (challengeDate < todayDate) {
-        return 'missed';
-      }
-      return '';
-    };
-    
-    // Function to get status icon
-    const getStatusIcon = (challenge) => {
-      const challengeDate = new Date(challenge.date);
-      challengeDate.setHours(0, 0, 0, 0);
-      const todayDate = new Date();
-      todayDate.setHours(0, 0, 0, 0);
-      
-      if (challengeDate > todayDate) {
-        return '🔒';
-      } else if (challenge.completed) {
-        return '✔';
-      } else if (challengeDate < todayDate) {
-        return '✖';
-      }
-      return '';
-    };
-    
-    // Function to format date
-    const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    };
-    
-    // Function to handle card click
-    const handleCardClick = (challenge, index) => {
-      const challengeDate = new Date(challenge.date);
-      challengeDate.setHours(0, 0, 0, 0);
-      const todayDate = new Date();
-      todayDate.setHours(0, 0, 0, 0);
-      
-      // Future days are not clickable
-      if (challengeDate > todayDate) {
-        return;
-      }
-      
-      // Completed/past challenges show results
-      if (challenge.completed || challengeDate < todayDate) {
-        // TODO: Show results page/modal
-        alert(`Challenge completed with score: ${challenge.score}/5`);
-      } else {
-        // Start today's challenge
-        startDailyChallenge(challenge.date);
-      }
-    };
-    
-    return (
-      <div className="home-screen">
-        <div className="screen-header">
-          <button 
-            className="back-button" 
-            onClick={() => setCurrentPage('home')}
-          >
-            ←
-          </button>
-          <h1>{t('play.title')}</h1>
-          <div style={{ width: 40 }}></div> {/* Spacer for alignment */}
-        </div>
-        
-        <div className="challenge-carousel-container">
-          <div className="carousel-track">
-            {weeklyChallenges.map((challenge, index) => {
-              const positionClass = getCardPositionClass(index);
-              const stateClass = getCardStateClass(challenge);
-              const statusIcon = getStatusIcon(challenge);
-              const challengeDate = new Date(challenge.date);
-              const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-              const isToday = challengeDate.toDateString() === new Date().toDateString();
-              
-              return (
-                <div 
-                  key={index}
-                  className={`carousel-card ${positionClass} ${stateClass}`}
-                  onClick={() => handleCardClick(challenge, index)}
-                >
-                  <div className="card-day">
-                    {isToday ? 'TODAY' : dayNames[challengeDate.getDay()]}
-                  </div>
-                  <div className="card-date">
-                    {formatDate(challenge.date)}
-                  </div>
-                  <div className="card-status">
-                    {statusIcon}
-                  </div>
-                  
-                  {challenge.completed && (
-                    <div className="card-score">
-                      {challenge.score}/5
-                    </div>
-                  )}
-                  
-                  {!challenge.completed && challengeDate <= new Date() && challengeDate.toDateString() === new Date().toDateString() && (
-                    <button 
-                      className="start-button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        startDailyChallenge(challenge.date);
-                      }}
-                    >
-                      Start
-                    </button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-          
-          {currentCarouselIndex > 0 && (
-            <button 
-              className="carousel-nav prev" 
-              onClick={() => setCurrentCarouselIndex(currentCarouselIndex - 1)}
-            >
-              ‹
-            </button>
-          )}
-          
-          {currentCarouselIndex < weeklyChallenges.length - 1 && (
-            <button 
-              className="carousel-nav next" 
-              onClick={() => setCurrentCarouselIndex(currentCarouselIndex + 1)}
-            >
-              ›
-            </button>
-          )}
-        </div>
-        
-        <div className="game-modes">
-          <h2>{t('play.otherGameModes')}</h2>
-          <button 
-            className="game-mode-button" 
-            onClick={() => setCurrentPage('free-run-config')}
-          >
-            {t('play.freeRunButton')}
-          </button>
-        </div>
+  // Render play screen
+  const renderPlayScreen = () => (
+    <div className="home-screen">
+      <div className="screen-header">
+        <button 
+          className="back-button" 
+          onClick={() => setCurrentPage('home')}
+        >
+          ←
+        </button>
+        <h1>{t('play.title')}</h1>
+        <div style={{ width: 40 }}></div> {/* Spacer for alignment */}
       </div>
-    );
-  };
+      
+      <div className="challenge-carousel-container">
+        <div className="carousel-track">
+          {weeklyChallenges.map((challenge, index) => {
+            const positionClass = getCardPositionClass(index);
+            const stateClass = getCardStateClass(challenge);
+            const statusIcon = getStatusIcon(challenge);
+            const challengeDate = new Date(challenge.date);
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const isToday = challengeDate.toDateString() === new Date().toDateString();
+            
+            return (
+              <div 
+                key={index}
+                className={`carousel-card ${positionClass} ${stateClass}`}
+                onClick={() => handleCardClick(challenge, index)}
+              >
+                <div className="card-day">
+                  {isToday ? 'TODAY' : dayNames[challengeDate.getDay()]}
+                </div>
+                <div className="card-date">
+                  {formatDate(challenge.date)}
+                </div>
+                <div className="card-status">
+                  {statusIcon}
+                </div>
+                
+                {challenge.completed && (
+                  <div className="card-score">
+                    {challenge.score}/5
+                  </div>
+                )}
+                
+                {!challenge.completed && challengeDate <= new Date() && challengeDate.toDateString() === new Date().toDateString() && (
+                  <button 
+                    className="start-button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      startDailyChallenge(challenge.date);
+                    }}
+                  >
+                    Start
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        
+        {carouselIndex > 0 && (
+          <button 
+            className="carousel-nav prev" 
+            onClick={() => setCarouselIndex(carouselIndex - 1)}
+          >
+            ‹
+          </button>
+        )}
+        
+        {carouselIndex < weeklyChallenges.length - 1 && (
+          <button 
+            className="carousel-nav next" 
+            onClick={() => setCarouselIndex(carouselIndex + 1)}
+          >
+            ›
+          </button>
+        )}
+      </div>
+      
+      <div className="game-modes">
+        <h2>{t('play.otherGameModes')}</h2>
+        <button 
+          className="game-mode-button" 
+          onClick={() => setCurrentPage('free-run-config')}
+        >
+          {t('play.freeRunButton')}
+        </button>
+      </div>
+    </div>
+  );
 
   // Render settings screen
   const renderSettingsScreen = () => (
@@ -844,14 +747,77 @@ function App() {
     </div>
   );
 
-  // Helper function to get operator symbol
-  const getOperator = (problemType) => {
-    switch (problemType) {
-      case 'addition': return t('operators.addition');
-      case 'subtraction': return t('operators.subtraction');
-      case 'multiplication': return t('operators.multiplication');
-      case 'division': return t('operators.division');
-      default: return t('operators.addition');
+  // Function to get card position classes
+  const getCardPositionClass = (index) => {
+    const diff = index - carouselIndex;
+    
+    if (diff === 0) return 'center';
+    if (diff === -1) return 'left';
+    if (diff === 1) return 'right';
+    if (diff === -2) return 'far-left';
+    if (diff === 2) return 'far-right';
+    return '';
+  };
+  
+  // Function to get card state classes
+  const getCardStateClass = (challenge) => {
+    const challengeDate = new Date(challenge.date);
+    challengeDate.setHours(0, 0, 0, 0);
+    const todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
+    
+    if (challengeDate > todayDate) {
+      return 'future';
+    } else if (challenge.completed) {
+      return 'completed';
+    } else if (challengeDate < todayDate) {
+      return 'missed';
+    }
+    return '';
+  };
+  
+  // Function to get status icon
+  const getStatusIcon = (challenge) => {
+    const challengeDate = new Date(challenge.date);
+    challengeDate.setHours(0, 0, 0, 0);
+    const todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
+    
+    if (challengeDate > todayDate) {
+      return '🔒';
+    } else if (challenge.completed) {
+      return '✔';
+    } else if (challengeDate < todayDate) {
+      return '✖';
+    }
+    return '';
+  };
+  
+  // Function to format date
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+  
+  // Function to handle card click
+  const handleCardClick = (challenge, index) => {
+    const challengeDate = new Date(challenge.date);
+    challengeDate.setHours(0, 0, 0, 0);
+    const todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
+    
+    // Future days are not clickable
+    if (challengeDate > todayDate) {
+      return;
+    }
+    
+    // Completed/past challenges show results
+    if (challenge.completed || challengeDate < todayDate) {
+      // TODO: Show results page/modal
+      alert(`Challenge completed with score: ${challenge.score}/5`);
+    } else {
+      // Start today's challenge
+      startDailyChallenge(challenge.date);
     }
   };
 
