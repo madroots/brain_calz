@@ -5,12 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Check, X, Trophy, Clock } from 'lucide-react';
-import { MathProblem, UserStats, Operation } from '@/types/math';
-import { generateMathProblem, getOperationSymbol, formatTime } from '@/utils/mathUtils';
+import { MathProblem, UserStats, Operation, GameMode } from '@/types/math';
+import { generateMathProblem, getOperationSymbol, formatTime, generateMultiplicationTableProblem } from '@/utils/mathUtils';
 import { updateStats } from '@/utils/localStorage';
 
 interface MathGameProps {
-  gameType: 'dailyChallenge' | 'freeRun';
+  gameType: GameMode;
   userStats: UserStats;
   onComplete: (updatedStats: UserStats) => void;
   onBack: () => void;
@@ -42,6 +42,11 @@ const MathGame = ({ gameType, userStats, onComplete, onBack, gameConfig }: MathG
         for (let i = 0; i < 5; i++) {
           const operation = operations[i % operations.length];
           newProblems.push(generateMathProblem(operation, 'medium'));
+        }
+      } else if (gameType === 'multiplicationTable') {
+        // Multiplication table training: 5 multiplication problems from 1x1 to 10x10
+        for (let i = 0; i < 5; i++) {
+          newProblems.push(generateMultiplicationTableProblem());
         }
       } else if (gameConfig) {
         // Free run: use selected config
@@ -190,7 +195,9 @@ const MathGame = ({ gameType, userStats, onComplete, onBack, gameConfig }: MathG
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <Badge variant="outline">
-            {gameType === 'dailyChallenge' ? 'Daily Challenge' : 'Free Practice'}
+            {gameType === 'dailyChallenge' ? 'Daily Challenge' : 
+             gameType === 'multiplicationTable' ? 'Multiplication Table' : 
+             'Free Practice'}
           </Badge>
           <div className="flex items-center gap-1 text-sm text-muted-foreground">
             <Clock className="w-4 h-4" />

@@ -1,4 +1,5 @@
 export type Operation = 'addition' | 'subtraction' | 'multiplication' | 'division';
+export type GameMode = 'dailyChallenge' | 'freeRun' | 'multiplicationTable';
 
 export interface MathProblem {
   id: string;

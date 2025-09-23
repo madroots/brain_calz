@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Zap, Settings, BarChart3, Home, Play } from 'lucide-react';
+import { Calendar, Zap, Settings, BarChart3, Home, Play, X } from 'lucide-react';
 import { getStoredStats, createInitialStats, saveStats } from '@/utils/localStorage';
 import { isDailyChallengeDone } from '@/utils/mathUtils';
 import { UserStats, GameConfig } from '@/types/math';
@@ -15,7 +15,7 @@ const Game = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [userStats, setUserStats] = useState<UserStats | null>(null);
-  const [currentView, setCurrentView] = useState<'menu' | 'dailyChallenge' | 'freeRun' | 'gameMode'>('menu');
+  const [currentView, setCurrentView] = useState<'menu' | 'dailyChallenge' | 'freeRun' | 'gameMode' | 'multiplicationTable'>('menu');
   const [freeRunConfig, setFreeRunConfig] = useState<GameConfig | null>(null);
   const username = location.state?.username;
 
@@ -76,6 +76,17 @@ const Game = () => {
         onComplete={handleGameComplete}
         onBack={() => setCurrentView('menu')}
         gameConfig={freeRunConfig || undefined}
+      />
+    );
+  }
+
+  if (currentView === 'multiplicationTable') {
+    return (
+      <MathGame
+        gameType="multiplicationTable"
+        userStats={userStats}
+        onComplete={handleGameComplete}
+        onBack={() => setCurrentView('menu')}
       />
     );
   }
@@ -169,6 +180,29 @@ const Game = () => {
             >
               <Play className="w-4 h-4 mr-2" />
               {dailyChallengeCompleted ? 'Challenge Completed' : 'Start Daily Challenge'}
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Multiplication Table Training */}
+        <Card className="border-0 shadow-primary">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <X className="w-5 h-5 text-purple-600" />
+              <CardTitle className="text-xl">Multiplication Table</CardTitle>
+            </div>
+            <CardDescription>
+              Master multiplication tables from 1x1 to 10x10
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button 
+              variant="hero"
+              className="w-full bg-purple-600 hover:bg-purple-700"
+              onClick={() => setCurrentView('multiplicationTable')}
+            >
+              <Play className="w-4 h-4 mr-2" />
+              Start Training
             </Button>
           </CardContent>
         </Card>

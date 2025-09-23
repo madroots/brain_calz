@@ -50,6 +50,21 @@ export const generateMathProblem = (operation: Operation, difficulty: 'easy' | '
   };
 };
 
+export const generateMultiplicationTableProblem = (): MathProblem => {
+  // Generate multiplication problems from 1x1 to 10x10
+  const operand1 = Math.floor(Math.random() * 10) + 1; // 1-10
+  const operand2 = Math.floor(Math.random() * 10) + 1; // 1-10
+  const answer = operand1 * operand2;
+  
+  return {
+    id: Math.random().toString(36).substr(2, 9),
+    operation: 'multiplication',
+    operand1,
+    operand2,
+    answer
+  };
+};
+
 export const getOperationSymbol = (operation: Operation): string => {
   const symbols = {
     addition: '+',
