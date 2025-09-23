@@ -9,9 +9,9 @@ COPY package*.json ./
 
 # Install dependencies - handle both cases where package-lock.json exists or not
 RUN if [ -f package-lock.json ]; then \
-      npm ci --omit=dev; \
+      npm ci; \
     else \
-      npm install --omit=dev; \
+      npm install; \
     fi
 
 # Copy the rest of the application code
