@@ -39,10 +39,16 @@ const Game = () => {
 
   const dailyChallengeCompleted = isDailyChallengeDone(userStats.dailyChallengeStats.lastCompletedDate);
 
-  const handleGameComplete = (updatedStats: UserStats) => {
+  const handleGameComplete = (updatedStats: UserStats, gameResults?: any) => {
     setUserStats(updatedStats);
     saveStats(updatedStats);
-    setCurrentView('menu');
+    
+    // If gameResults is provided, navigate to the results page
+    if (gameResults) {
+      navigate('/results', { state: gameResults });
+    } else {
+      setCurrentView('menu');
+    }
   };
 
   if (currentView === 'dailyChallenge') {

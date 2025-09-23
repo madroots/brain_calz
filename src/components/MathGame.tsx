@@ -12,7 +12,7 @@ import { updateStats } from '@/utils/localStorage';
 interface MathGameProps {
   gameType: GameMode;
   userStats: UserStats;
-  onComplete: (updatedStats: UserStats) => void;
+  onComplete: (updatedStats: UserStats, gameResults?: any) => void;  // gameResults will contain the full results
   onBack: () => void;
   gameConfig?: {
     operations: Operation[];
@@ -114,7 +114,20 @@ const MathGame = ({ gameType, userStats, onComplete, onBack, gameConfig }: MathG
         }));
         
         const updatedStats = updateStats(userStats, completedProblems, gameType === 'dailyChallenge');
-        onComplete(updatedStats);
+        
+        // Prepare game results to pass to parent component
+        const gameResults = {
+          gameType,
+          problems: updatedProblems,
+          gameStartTime,
+          gameEndTime: Date.now(),
+          userStats: updatedStats
+        };
+        
+        // Pass the complete game results to the parent component
+        setTimeout(() => {
+          onComplete(updatedStats, gameResults);
+        }, 1500);
       }
     }, 1500);
   };
