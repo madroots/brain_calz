@@ -1,0 +1,19 @@
+AI Code Consistency Guidelines
+
+READ THIS EACH TIME USER ASKS FOR ASSISTANCE/CODING TASK
+
+Purpose: Ensure AI-generated code aligns with project's existing patterns, style, and design system for TypeScript, JavaScript, and CSS.
+
+Core Principles:
+
+- Consistency over personal preference – Match existing code exactly
+- Minimal assumptions – When uncertain, ask or use conservative defaults
+- Progressive enhancement – Prefer existing patterns over "clever" new solutions
+
+When in Doubt:
+- Check existing files in the same directory
+- Prefer verbosity over cleverness
+- Ask for clarification if design specs are ambiguous
+
+Remember: Your goal is to make new code indistinguishable from existing code written by the team. 
+
