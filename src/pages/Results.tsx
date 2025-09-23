@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Trophy, Clock, Star, Target, BarChart3, Zap, Calendar } from 'lucide-react';
+import { ArrowLeft, Trophy, Clock, Star, Target, BarChart3 } from 'lucide-react';
 import { MathProblem, GameMode } from '@/types/math';
 import { formatTime, getOperationSymbol, getOperationName } from '@/utils/mathUtils';
 
@@ -21,11 +21,14 @@ const Results = () => {
   const navigate = useNavigate();
   const results = location.state as GameResults | null;
   const [showConfetti, setShowConfetti] = useState(false);
+  const [points, setPoints] = useState<number | string>(0); // Can be number or 'N/A'
+  const [rank, setRank] = useState('N/A');
   
   // Get the confetti canvas ref
   const confettiCanvasRef = useRef<HTMLCanvasElement>(null);
 
   if (!results) {
+    console.log("No results found, redirecting to /game");
     navigate('/game');
     return null;
   }
@@ -40,15 +43,50 @@ const Results = () => {
 
   // Determine if we should show confetti (80%+ accuracy)
   useEffect(() => {
+    console.log("Accuracy:", accuracy);
     if (accuracy >= 80) {
+      console.log("Showing confetti");
       setShowConfetti(true);
       // Initialize confetti
       initConfetti();
     }
+    
+    // Get ranking data after a brief delay to ensure it's updated
+    const fetchRankingData = async () => {
+      try {
+        // Dynamically import the ranking system
+        const rankingModule = await import('@/utils/rankingSystem');
+        const rankingData = rankingModule.getStoredRankingData();
+        
+        // Calculate rank based on total points (this is a simplified ranking)
+        let calculatedRank = 'N/A';
+        if (rankingData.totalPoints >= 2000) {
+          calculatedRank = 'Diamond';
+        } else if (rankingData.totalPoints >= 1000) {
+          calculatedRank = 'Platinum';
+        } else if (rankingData.totalPoints >= 500) {
+          calculatedRank = 'Gold';
+        } else if (rankingData.totalPoints >= 100) {
+          calculatedRank = 'Silver';
+        } else if (rankingData.totalPoints > 0) {
+          calculatedRank = 'Bronze';
+        }
+        
+        setPoints(rankingData.totalPoints);
+        setRank(calculatedRank);
+      } catch (error) {
+        console.error("Error accessing ranking data:", error);
+        setPoints('N/A');
+        setRank('N/A');
+      }
+    };
+
+    fetchRankingData();
   }, [accuracy]);
 
   // Confetti effect
   const initConfetti = () => {
+    console.log("Initializing confetti");
     if (typeof window !== 'undefined' && showConfetti) {
       import('canvas-confetti').then(confettiModule => {
         const confetti = confettiModule.default;
@@ -190,7 +228,7 @@ const Results = () => {
           </CardContent>
         </Card>
 
-        {/* Ranking and Points Placeholder */}
+        {/* Ranking and Points */}
         <Card className="border-0 shadow-primary">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -201,12 +239,12 @@ const Results = () => {
           <CardContent>
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center p-4 bg-gradient-primary rounded-lg">
-                <div className="text-xl font-bold text-white">N/A</div>
+                <div className="text-xl font-bold text-white">{rank}</div>
                 <div className="text-xs text-white/80">Rank</div>
               </div>
               <div className="text-center p-4 bg-gradient-warning rounded-lg">
-                <div className="text-xl font-bold text-white">0</div>
-                <div className="text-xs text-white/80">Points</div>
+                <div className="text-xl font-bold text-white">{points}</div>
+                <div className="text-xs text-white/80">Total Points</div>
               </div>
             </div>
           </CardContent>

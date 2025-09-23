@@ -1,4 +1,14 @@
-import { UserStats, Operation } from '@/types/math';
+import { UserStats, Operation, GameMode } from '@/types/math';
+import { 
+  getStoredRankingData, 
+  saveRankingData, 
+  calculatePoints, 
+  updateStreak, 
+  claimDailyBonus, 
+  addToSpeedHistory, 
+  updateTotalPoints,
+  getTodayUTC
+} from '@/utils/rankingSystem';
 
 const STORAGE_KEY = 'mathTrainingStats';
 
@@ -51,9 +61,17 @@ export const createInitialStats = (username: string): UserStats => {
 export const updateStats = (
   stats: UserStats,
   problems: Array<{ operation: Operation; isCorrect: boolean; timeToSolve: number }>,
-  isDailyChallenge: boolean = false
+  isDailyChallenge: boolean = false,
+  gameMode: GameMode = 'freeRun',  // Add gameMode parameter
+  isCompleteSession: boolean = true  // Add isCompleteSession parameter
 ): UserStats => {
   const newStats = { ...stats };
+  
+  // Calculate session stats
+  const totalTime = problems.reduce((sum, problem) => sum + problem.timeToSolve, 0);
+  const avgTimePerProblem = problems.length > 0 ? totalTime / problems.length : 0;
+  const correctCount = problems.filter(p => p.isCorrect).length;
+  const accuracy = problems.length > 0 ? (correctCount / problems.length) * 100 : 0;
   
   // Update overall stats
   problems.forEach(problem => {
@@ -81,31 +99,51 @@ export const updateStats = (
   
   // Update daily challenge stats
   if (isDailyChallenge) {
-    const correctCount = problems.filter(p => p.isCorrect).length;
     const score = (correctCount / problems.length) * 100;
     const today = new Date().toDateString();
     
     newStats.dailyChallengeStats.lastCompletedDate = today;
     newStats.dailyChallengeStats.totalCompleted++;
     
-    // Update streak
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    if (newStats.dailyChallengeStats.lastCompletedDate === yesterday.toDateString()) {
-      newStats.dailyChallengeStats.streak++;
-    } else {
-      newStats.dailyChallengeStats.streak = 1;
-    }
-    
-    // Update average score
+    // Update streak - this will be handled by the ranking system
+    // Recalculate average score
     const prevTotal = newStats.dailyChallengeStats.totalCompleted - 1;
     newStats.dailyChallengeStats.averageScore = 
       (newStats.dailyChallengeStats.averageScore * prevTotal + score) / newStats.dailyChallengeStats.totalCompleted;
   }
   
-  // Recalculate accuracy and average time
+  // Recalculate overall accuracy and average time
   newStats.overallStats.accuracy = (newStats.overallStats.totalCorrect / newStats.overallStats.totalProblemsSolved) * 100;
   newStats.overallStats.averageTimePerProblem = newStats.freeRunStats.totalTime / newStats.freeRunStats.totalProblems || 0;
+  
+  // Calculate points using the new ranking system if needed
+  // For now, we'll skip this to prevent any issues
+  // We'll call the point calculation separately in the components that need it
+  if (isCompleteSession) {
+    try {
+      // Calculate points using the new ranking system
+      const pointsData = calculatePoints(gameMode, problems.length, accuracy, avgTimePerProblem, isCompleteSession);
+      
+      // Update streak if this is a daily challenge
+      if (isDailyChallenge) {
+        updateStreak();
+      }
+      
+      // Claim daily bonus if eligible
+      if (isCompleteSession) {
+        claimDailyBonus();
+      }
+      
+      // Add to speed history
+      addToSpeedHistory(gameMode, avgTimePerProblem);
+      
+      // Update total points
+      updateTotalPoints(pointsData.totalPoints);
+    } catch (error) {
+      console.error("Error in ranking system:", error);
+      // Continue without ranking updates in case of errors
+    }
+  }
   
   return newStats;
 };

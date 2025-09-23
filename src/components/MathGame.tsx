@@ -113,7 +113,7 @@ const MathGame = ({ gameType, userStats, onComplete, onBack, gameConfig }: MathG
           timeToSolve: p.timeToSolve || 0
         }));
         
-        const updatedStats = updateStats(userStats, completedProblems, gameType === 'dailyChallenge');
+        const updatedStats = updateStats(userStats, completedProblems, gameType === 'dailyChallenge', gameType, true);
         
         // Prepare game results to pass to parent component
         const gameResults = {

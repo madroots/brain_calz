@@ -3,9 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Trophy, Target, Clock, Flame, Plus, Minus, X, Divide } from 'lucide-react';
+import { ArrowLeft, Trophy, Target, Clock, Flame, Plus, Minus, X, Divide, Star } from 'lucide-react';
 import { UserStats, Operation } from '@/types/math';
 import { formatTime, getOperationName } from '@/utils/mathUtils';
+import { getStoredRankingData } from '@/utils/rankingSystem';
 
 const Stats = () => {
   const location = useLocation();
@@ -217,6 +218,59 @@ const Stats = () => {
                 <p>Start practicing to see your operation stats!</p>
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Ranking Stats */}
+        <Card className="border-0 shadow-primary">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Star className="w-5 h-5 text-purple-600" />
+              Your Ranking
+            </CardTitle>
+            <CardDescription>
+              Your rank and total points earned
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center p-4 bg-gradient-primary rounded-lg">
+                {(() => {
+                  const rankingData = getStoredRankingData();
+                  let rank = 'N/A';
+                  
+                  if (rankingData.totalPoints >= 2000) {
+                    rank = 'Diamond';
+                  } else if (rankingData.totalPoints >= 1000) {
+                    rank = 'Platinum';
+                  } else if (rankingData.totalPoints >= 500) {
+                    rank = 'Gold';
+                  } else if (rankingData.totalPoints >= 100) {
+                    rank = 'Silver';
+                  } else {
+                    rank = 'Bronze';
+                  }
+                  
+                  return (
+                    <>
+                      <div className="text-xl font-bold text-white">{rank}</div>
+                      <div className="text-xs text-white/80">Rank</div>
+                    </>
+                  );
+                })()}
+              </div>
+              <div className="text-center p-4 bg-gradient-warning rounded-lg">
+                {(() => {
+                  const rankingData = getStoredRankingData();
+                  return (
+                    <>
+                      <div className="text-xl font-bold text-white">{rankingData.totalPoints}</div>
+                      <div className="text-xs text-white/80">Total Points</div>
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
           </CardContent>
         </Card>
 
